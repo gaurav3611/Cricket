@@ -155,6 +155,3 @@ gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:5000
 - **Hardware**: ESP32 + MPU6050
 - **Real-time**: WebSocket (Socket.IO)
 
-## 📄 License
-
-MIT License — Free for commercial and personal use.

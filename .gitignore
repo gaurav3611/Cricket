@@ -1,0 +1,15 @@
+# Arduino/Firmware
+firmware/
+
+# Python
+backend/venv/
+backend/__pycache__/
+backend/.env
+.idea/
+.vscode/
+
+# MacOS
+.DS_Store
+
+# Node/Frontend (if applicable)
+node_modules/

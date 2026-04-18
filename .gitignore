@@ -1,15 +1,29 @@
-# Arduino/Firmware
-firmware/
+# ===== Secrets / Credentials =====
+backend/.env
+backend/serviceAccountKey.json
 
-# Python
+# ===== Python =====
 backend/venv/
 backend/__pycache__/
-backend/.env
+*.pyc
+*.pyo
+
+# ===== Arduino / Firmware build =====
+firmware/.build/
+firmware/.pio/
+
+# ===== IDE =====
 .idea/
 .vscode/
+*.swp
+*.swo
 
-# MacOS
+# ===== macOS =====
 .DS_Store
+Thumbs.db
 
-# Node/Frontend (if applicable)
+# ===== Node (if applicable) =====
 node_modules/
+
+# ===== Gemini =====
+.gemini/

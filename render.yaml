@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: swinglab-backend
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: cd backend && gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:$PORT
+    envVars:
+      - key: FLASK_DEBUG
+        value: false
+      - key: FLASK_SECRET_KEY
+        generateValue: true
+      - key: FIREBASE_SERVICE_ACCOUNT_PATH
+        value: serviceAccountKey.json
+      - key: PORT
+        value: 5050

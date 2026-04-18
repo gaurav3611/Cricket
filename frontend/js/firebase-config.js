@@ -15,12 +15,13 @@
 // FIREBASE CONFIG — REPLACE WITH YOUR VALUES
 // ============================================
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId: "YOUR_APP_ID"
+  apiKey: "AIzaSyCiv1I-SbHwUcmGlC4hrJQmxuaCEkkPhgQ",
+  authDomain: "cricpro-app.firebaseapp.com",
+  projectId: "cricpro-app",
+  storageBucket: "cricpro-app.firebasestorage.app",
+  messagingSenderId: "140824187893",
+  appId: "1:140824187893:web:7692545a9a2b7d91a5c6bc",
+  measurementId: "G-DLXEJ3PFR9"
 };
 
 // ============================================

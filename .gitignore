@@ -27,3 +27,6 @@ node_modules/
 
 # ===== Gemini =====
 .gemini/
+
+# Hardware firmware (local only)
+firmware/

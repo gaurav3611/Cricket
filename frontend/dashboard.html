@@ -16,19 +16,21 @@
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏏</text></svg>">
 <style>
   :root {
-    --bg: #080c10;
-    --surface: #0d1520;
-    --surface2: #111e2e;
-    --surface3: #162538;
-    --border: #1a3a5c;
+    --bg: #060a10;
+    --surface: rgba(12,20,35,0.85);
+    --surface2: rgba(18,30,50,0.9);
+    --surface3: rgba(22,37,56,0.9);
+    --border: rgba(30,65,110,0.45);
     --accent: #00d4ff;
     --accent2: #ff6b00;
     --green: #00ff88;
     --red: #ff2d55;
     --purple: #a855f7;
+    --gold: #f5c542;
     --text: #e0eaf5;
     --muted: #4a6a8a;
     --glow: 0 0 20px rgba(0,212,255,0.3);
+    --glass: saturate(180%) blur(20px);
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -41,57 +43,76 @@
   body::before {
     content: '';
     position: fixed; inset: 0;
-    background: radial-gradient(ellipse at 20% 20%, rgba(0,212,255,0.05) 0%, transparent 60%),
-                radial-gradient(ellipse at 80% 80%, rgba(255,107,0,0.05) 0%, transparent 60%);
+    background:
+      radial-gradient(ellipse at 15% 15%, rgba(0,212,255,0.07) 0%, transparent 55%),
+      radial-gradient(ellipse at 85% 85%, rgba(255,107,0,0.06) 0%, transparent 55%),
+      radial-gradient(ellipse at 50% 50%, rgba(168,85,247,0.04) 0%, transparent 70%);
     pointer-events: none; z-index: 0;
   }
+
+  /* ===== Scrollbar ===== */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   /* ===== HEADER ===== */
   header {
     position: sticky; top: 0; z-index: 100;
     display: flex; align-items: center; justify-content: space-between;
-    padding: 14px 32px;
+    padding: 12px 28px;
     border-bottom: 1px solid var(--border);
-    background: rgba(13,21,32,0.95);
-    backdrop-filter: blur(16px);
+    background: rgba(8,14,24,0.92);
+    backdrop-filter: var(--glass);
+    -webkit-backdrop-filter: var(--glass);
     flex-wrap: wrap; gap: 10px;
   }
   .logo {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.1rem; font-weight: 900;
+    font-size: 1.15rem; font-weight: 900;
     letter-spacing: 3px; color: var(--accent);
     text-shadow: var(--glow);
+    display: flex; align-items: center; gap: 10px;
   }
   .logo span { color: var(--accent2); }
+  .logo-icon {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, rgba(0,212,255,0.2), rgba(255,107,0,0.2));
+    border: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem;
+  }
   .header-nav {
-    display: flex; gap: 8px; align-items: center;
+    display: flex; gap: 6px; align-items: center;
   }
   .nav-btn {
     font-family: 'Inter', sans-serif;
-    font-size: 0.75rem; font-weight: 600;
+    font-size: 0.72rem; font-weight: 600;
     letter-spacing: 1px; text-transform: uppercase;
-    padding: 8px 20px;
+    padding: 8px 18px;
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
-    background: var(--surface);
+    transition: all 0.25s ease;
+    background: rgba(12,20,35,0.6);
     color: var(--text);
+    backdrop-filter: blur(8px);
   }
-  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
-  .nav-btn.active { background: rgba(0,212,255,0.1); border-color: var(--accent); color: var(--accent); }
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(0,212,255,0.06); }
+  .nav-btn.active { background: rgba(0,212,255,0.12); border-color: var(--accent); color: var(--accent); box-shadow: 0 0 12px rgba(0,212,255,0.15); }
   .nav-btn.accent {
     background: linear-gradient(135deg, #00b4d8, #00d4ff);
     color: #000; border: none; font-weight: 700;
   }
-  .nav-btn.accent:hover { box-shadow: 0 0 20px rgba(0,212,255,0.4); transform: translateY(-1px); }
+  .nav-btn.accent:hover { box-shadow: 0 0 24px rgba(0,212,255,0.5); transform: translateY(-1px); }
   .nav-btn.purple {
     background: linear-gradient(135deg, #7c3aed, #a855f7);
     color: #fff; border: none;
   }
-  .nav-btn.purple:hover { box-shadow: 0 0 20px rgba(168,85,247,0.4); }
+  .nav-btn.purple:hover { box-shadow: 0 0 24px rgba(168,85,247,0.5); }
   .nav-btn.danger {
-    color: var(--red); border-color: rgba(255,45,85,0.3);
+    color: var(--red); border-color: rgba(255,45,85,0.25);
   }
   .nav-btn.danger:hover { background: rgba(255,45,85,0.1); border-color: var(--red); }
   .header-right {
@@ -99,11 +120,12 @@
   }
   .status-pill {
     display: flex; align-items: center; gap: 8px;
-    padding: 6px 14px;
+    padding: 5px 14px;
     border-radius: 100px;
     border: 1px solid var(--border);
-    background: var(--surface);
-    font-size: 0.7rem; font-weight: 600; letter-spacing: 1px;
+    background: rgba(12,20,35,0.7);
+    backdrop-filter: blur(8px);
+    font-size: 0.68rem; font-weight: 600; letter-spacing: 1px;
     text-transform: uppercase;
   }
   .status-dot {
@@ -114,28 +136,29 @@
   }
   .status-dot.live {
     background: var(--green);
-    box-shadow: 0 0 8px var(--green);
+    box-shadow: 0 0 10px var(--green);
     animation: pulse 1.5s infinite;
   }
   .status-dot.connected {
     background: var(--purple);
-    box-shadow: 0 0 8px var(--purple);
+    box-shadow: 0 0 10px var(--purple);
     animation: pulse 1.5s infinite;
   }
-  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
   .user-avatar {
-    width: 32px; height: 32px;
+    width: 34px; height: 34px;
     border-radius: 50%;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
     display: flex; align-items: center; justify-content: center;
     font-weight: 700; font-size: 0.8rem; color: #000;
+    box-shadow: 0 0 12px rgba(0,212,255,0.2);
   }
 
   /* ===== MAIN CONTAINER ===== */
   .main-container {
     position: relative; z-index: 1;
-    max-width: 1400px; margin: 0 auto;
-    padding: 24px 32px;
+    max-width: 1440px; margin: 0 auto;
+    padding: 24px 28px;
   }
 
   /* ===== HOME VIEW ===== */
@@ -143,38 +166,44 @@
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 28px;
     flex-wrap: wrap; gap: 16px;
+    padding: 24px 28px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    backdrop-filter: var(--glass);
   }
   .welcome-text h1 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.5rem; font-weight: 700;
+    font-size: 1.35rem; font-weight: 700;
     color: var(--text);
-    margin-bottom: 4px;
+    margin-bottom: 6px;
   }
   .welcome-text h1 .highlight { color: var(--accent); }
-  .welcome-text p { color: var(--muted); font-size: 0.85rem; }
+  .welcome-text p { color: var(--muted); font-size: 0.82rem; line-height: 1.5; }
 
   /* Stats Grid */
   .stats-grid {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
-    gap: 16px;
+    gap: 14px;
     margin-bottom: 28px;
   }
   .stat-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
-    padding: 22px 24px;
+    border-radius: 16px;
+    padding: 20px 22px;
     position: relative;
     overflow: hidden;
-    transition: border-color 0.3s, transform 0.2s;
+    transition: all 0.35s ease;
+    backdrop-filter: blur(12px);
   }
-  .stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .stat-card:hover { border-color: var(--accent); transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,0,0,0.3); }
   .stat-card::before {
     content: '';
     position: absolute; top: 0; left: 0; right: 0;
     height: 3px;
-    border-radius: 14px 14px 0 0;
+    border-radius: 16px 16px 0 0;
   }
   .stat-card:nth-child(1)::before { background: linear-gradient(90deg, #00d4ff, #00b4d8); }
   .stat-card:nth-child(2)::before { background: linear-gradient(90deg, #ff6b00, #ff9500); }
@@ -182,23 +211,24 @@
   .stat-card:nth-child(4)::before { background: linear-gradient(90deg, #ff2d55, #ff6b8a); }
   .stat-card:nth-child(5)::before { background: linear-gradient(90deg, #a855f7, #7c3aed); }
   .stat-icon {
-    font-size: 1.5rem;
-    margin-bottom: 12px;
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 6px rgba(0,212,255,0.3));
   }
   .stat-label {
-    font-size: 0.65rem; font-weight: 600;
+    font-size: 0.62rem; font-weight: 600;
     letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 8px;
   }
   .stat-value {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1.8rem; font-weight: 700;
+    font-size: 1.7rem; font-weight: 700;
     color: var(--accent);
     line-height: 1;
   }
   .stat-value .unit {
-    font-size: 0.75rem; font-weight: 400;
+    font-size: 0.7rem; font-weight: 400;
     color: var(--muted); margin-left: 4px;
   }
 
@@ -214,49 +244,53 @@
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 24px;
     overflow: hidden;
+    backdrop-filter: blur(12px);
   }
   .card-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px;
   }
   .card-title {
-    font-size: 0.7rem; font-weight: 600;
+    font-size: 0.68rem; font-weight: 600;
     letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted);
     display: flex; align-items: center; gap: 8px;
   }
   .card-title::after {
     content: ''; flex: 1; height: 1px;
-    background: var(--border);
+    background: linear-gradient(90deg, var(--border), transparent);
   }
   .card-badge {
-    font-size: 0.65rem; font-weight: 700;
+    font-size: 0.62rem; font-weight: 700;
     letter-spacing: 1px;
-    padding: 3px 10px; border-radius: 100px;
+    padding: 4px 12px; border-radius: 100px;
     background: rgba(0,212,255,0.1);
     color: var(--accent);
     border: 1px solid rgba(0,212,255,0.2);
   }
 
   /* Session History */
-  .session-list { list-style: none; }
+  .session-list { list-style: none; max-height: 400px; overflow-y: auto; }
   .session-item {
     display: grid;
     grid-template-columns: auto 1fr auto;
     gap: 16px;
     align-items: center;
     padding: 14px 0;
-    border-bottom: 1px solid rgba(26,58,92,0.4);
-    transition: background 0.2s;
-    cursor: default;
+    border-bottom: 1px solid rgba(26,58,92,0.3);
+    transition: all 0.2s;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 14px 12px;
   }
+  .session-item:hover { background: rgba(0,212,255,0.04); }
   .session-item:last-child { border-bottom: none; }
   .session-icon {
-    width: 42px; height: 42px;
-    border-radius: 10px;
+    width: 44px; height: 44px;
+    border-radius: 12px;
     display: flex; align-items: center; justify-content: center;
     font-size: 1.2rem;
     background: var(--surface2);
@@ -271,9 +305,7 @@
     font-size: 0.72rem;
     color: var(--muted);
   }
-  .session-stats {
-    text-align: right;
-  }
+  .session-stats { text-align: right; }
   .session-speed {
     font-family: 'Orbitron', sans-serif;
     font-size: 1rem; font-weight: 700;
@@ -303,86 +335,111 @@
   .action-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 14px;
+    border-radius: 16px;
     padding: 24px;
     text-align: center;
-    transition: all 0.3s;
+    transition: all 0.35s ease;
     cursor: pointer;
+    backdrop-filter: blur(12px);
   }
-  .action-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+  .action-card:hover { transform: translateY(-3px); box-shadow: 0 12px 40px rgba(0,0,0,0.3); }
   .action-card .action-icon { font-size: 2.5rem; margin-bottom: 12px; }
   .action-card h3 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.85rem; font-weight: 700;
+    font-size: 0.82rem; font-weight: 700;
     letter-spacing: 2px;
     margin-bottom: 8px;
   }
   .action-card p {
-    font-size: 0.78rem; color: var(--muted);
+    font-size: 0.76rem; color: var(--muted);
     line-height: 1.5; margin-bottom: 16px;
   }
   .action-card .action-btn {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem; font-weight: 700;
+    font-size: 0.68rem; font-weight: 700;
     letter-spacing: 2px; text-transform: uppercase;
     padding: 12px 28px;
-    border: none; border-radius: 8px;
+    border: none; border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s;
     width: 100%;
   }
-  .action-card.ble-card { border-color: rgba(168,85,247,0.3); }
+  .action-card.ble-card { border-color: rgba(168,85,247,0.25); }
   .action-card.ble-card:hover { border-color: var(--purple); }
   .action-card.ble-card h3 { color: var(--purple); }
   .action-card.ble-card .action-btn {
     background: linear-gradient(135deg, #7c3aed, #a855f7);
     color: #fff;
   }
-  .action-card.ble-card .action-btn:hover { box-shadow: 0 0 20px rgba(168,85,247,0.5); }
-  .action-card.demo-card { border-color: rgba(0,212,255,0.3); }
+  .action-card.ble-card .action-btn:hover { box-shadow: 0 0 24px rgba(168,85,247,0.5); }
+  .action-card.demo-card { border-color: rgba(0,212,255,0.25); }
   .action-card.demo-card:hover { border-color: var(--accent); }
   .action-card.demo-card h3 { color: var(--accent); }
   .action-card.demo-card .action-btn {
     background: linear-gradient(135deg, #00b4d8, #00d4ff);
     color: #000;
   }
-  .action-card.demo-card .action-btn:hover { box-shadow: 0 0 20px rgba(0,212,255,0.5); }
-  .action-card.history-card { border-color: rgba(0,255,136,0.2); }
-  .action-card.history-card:hover { border-color: var(--green); }
-  .action-card.history-card h3 { color: var(--green); }
+  .action-card.demo-card .action-btn:hover { box-shadow: 0 0 24px rgba(0,212,255,0.5); }
 
   /* ===== LIVE VIEW ===== */
   #liveView { display: none; }
   .live-header {
     display: flex; align-items: center; justify-content: space-between;
     margin-bottom: 20px; flex-wrap: wrap; gap: 12px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    backdrop-filter: var(--glass);
   }
   .live-header h2 {
     font-family: 'Orbitron', sans-serif;
-    font-size: 1rem; font-weight: 700;
+    font-size: 0.95rem; font-weight: 700;
     letter-spacing: 2px; color: var(--accent);
+    display: flex; align-items: center; gap: 10px;
   }
-  .live-controls { display: flex; gap: 10px; }
+  .live-header h2 .rec-dot {
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--red);
+    box-shadow: 0 0 8px var(--red);
+    animation: pulse 1s infinite;
+  }
+  .live-controls { display: flex; gap: 8px; flex-wrap: wrap; }
   .btn {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem; font-weight: 700;
+    font-size: 0.68rem; font-weight: 700;
     letter-spacing: 2px; text-transform: uppercase;
-    padding: 10px 28px;
-    border: none; border-radius: 6px;
+    padding: 10px 24px;
+    border: none; border-radius: 10px;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.25s ease;
+    display: flex; align-items: center; gap: 8px;
   }
+  .btn-swing {
+    background: linear-gradient(135deg, #00cc6a, #00ff88);
+    color: #000;
+    box-shadow: 0 0 16px rgba(0,255,136,0.3);
+    font-size: 0.75rem;
+    padding: 12px 32px;
+  }
+  .btn-swing:hover { box-shadow: 0 0 30px rgba(0,255,136,0.6); transform: translateY(-2px); }
+  .btn-swing.recording {
+    background: linear-gradient(135deg, #ff2d55, #ff6b8a);
+    box-shadow: 0 0 16px rgba(255,45,85,0.4);
+    animation: pulse-btn 1.2s infinite;
+  }
+  @keyframes pulse-btn { 0%,100%{box-shadow:0 0 16px rgba(255,45,85,0.4)} 50%{box-shadow:0 0 30px rgba(255,45,85,0.7)} }
   .btn-start {
     background: var(--accent);
     color: #000;
-    box-shadow: 0 0 16px rgba(0,212,255,0.4);
+    box-shadow: 0 0 16px rgba(0,212,255,0.3);
   }
-  .btn-start:hover { box-shadow: 0 0 28px rgba(0,212,255,0.7); transform: translateY(-1px); }
+  .btn-start:hover { box-shadow: 0 0 30px rgba(0,212,255,0.6); transform: translateY(-1px); }
   .btn-stop {
     background: transparent;
     color: var(--red);
     border: 1px solid var(--red);
-    box-shadow: 0 0 8px rgba(255,45,85,0.2);
+    box-shadow: 0 0 8px rgba(255,45,85,0.15);
   }
   .btn-stop:hover { background: rgba(255,45,85,0.1); transform: translateY(-1px); }
   .btn-back {
@@ -392,21 +449,52 @@
   }
   .btn-back:hover { color: var(--text); border-color: var(--text); }
 
+  /* Swing Button Prominent */
+  .swing-control {
+    display: flex; align-items: center; gap: 16px;
+    padding: 16px 24px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+    backdrop-filter: var(--glass);
+  }
+  .swing-control .swing-info {
+    flex: 1;
+  }
+  .swing-control .swing-info h3 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.78rem; font-weight: 700;
+    letter-spacing: 2px; color: var(--text);
+    margin-bottom: 4px;
+  }
+  .swing-control .swing-info p {
+    font-size: 0.72rem; color: var(--muted);
+  }
+  .shot-counter {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.8rem; font-weight: 900;
+    color: var(--accent);
+    text-shadow: 0 0 16px rgba(0,212,255,0.4);
+    min-width: 60px; text-align: center;
+  }
+
   /* Dashboard Grid */
   .dashboard {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 16px;
+    gap: 14px;
   }
 
   .kpi-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 18px 22px;
     position: relative;
     overflow: hidden;
-    transition: border-color 0.3s;
+    transition: all 0.3s;
+    backdrop-filter: blur(12px);
   }
   .kpi-card::before {
     content: '';
@@ -418,30 +506,30 @@
   }
   .kpi-card.active::before { transform: scaleX(1); }
   .kpi-label {
-    font-size: 0.65rem; font-weight: 600;
+    font-size: 0.62rem; font-weight: 600;
     letter-spacing: 2px; text-transform: uppercase;
     color: var(--muted);
     margin-bottom: 10px;
   }
   .kpi-value {
     font-family: 'Orbitron', sans-serif;
-    font-size: 2rem; font-weight: 700;
+    font-size: 1.9rem; font-weight: 700;
     color: var(--accent);
     line-height: 1;
   }
   .kpi-unit {
-    font-size: 0.8rem; font-weight: 400;
+    font-size: 0.75rem; font-weight: 400;
     color: var(--muted);
     margin-left: 4px;
   }
   .kpi-sub {
-    font-size: 0.7rem;
+    font-size: 0.68rem;
     color: var(--muted);
     margin-top: 6px;
   }
   .kpi-badge {
     display: inline-block;
-    font-size: 0.65rem; font-weight: 700;
+    font-size: 0.62rem; font-weight: 700;
     letter-spacing: 1px; text-transform: uppercase;
     padding: 2px 10px; border-radius: 100px;
     margin-top: 8px;
@@ -464,20 +552,25 @@
   .chart-card {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 20px 24px;
+    border-radius: 14px;
+    padding: 20px 22px;
     overflow: hidden;
+    backdrop-filter: blur(12px);
+    transition: border-color 0.3s;
   }
+  .chart-card:hover { border-color: rgba(0,212,255,0.3); }
   .chart-card.span2 { grid-column: span 2; }
   .chart-card.span3 { grid-column: span 3; }
   .chart-card.span4 { grid-column: span 4; }
   canvas { display: block; }
 
   #threeContainer {
-    width: 100%; height: 280px;
-    border-radius: 8px;
+    width: 100%; height: 420px;
+    border-radius: 12px;
     overflow: hidden;
-    background: #050a10;
+    background: linear-gradient(180deg, #020610, #050c18);
+    border: 1px solid rgba(0,212,255,0.15);
+    box-shadow: inset 0 0 60px rgba(0,212,255,0.03);
   }
 
   .shot-direction-visual {
@@ -493,7 +586,7 @@
     position: relative;
     overflow: hidden;
   }
-  .field-line { position: absolute; background: rgba(0,255,136,0.15); }
+  .field-line { position: absolute; background: rgba(0,255,136,0.12); }
   .field-line.v { width: 1px; height: 100%; left: 50%; top: 0; }
   .field-line.h { height: 1px; width: 100%; top: 50%; left: 0; }
   .field-sector { position: absolute; width: 50%; height: 50%; opacity: 0; transition: opacity 0.4s; }
@@ -506,29 +599,29 @@
     width: 10px; height: 10px;
     border-radius: 50%;
     background: var(--accent);
-    box-shadow: 0 0 10px var(--accent);
+    box-shadow: 0 0 12px var(--accent);
     top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     transition: top 0.15s, left 0.15s;
   }
   .shot-label {
     font-family: 'Orbitron', sans-serif;
-    font-size: 0.7rem; font-weight: 700;
+    font-size: 0.68rem; font-weight: 700;
     letter-spacing: 1px;
-    margin-top: 8px; text-align: center;
+    margin-top: 10px; text-align: center;
     color: var(--accent);
     min-height: 18px;
   }
 
-  .axis-bars { display: flex; flex-direction: column; gap: 14px; }
-  .axis-label { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 6px; }
+  .axis-bars { display: flex; flex-direction: column; gap: 12px; }
+  .axis-label { display: flex; justify-content: space-between; font-size: 0.7rem; margin-bottom: 5px; }
   .axis-name { font-weight: 600; letter-spacing: 1px; }
-  .axis-val { font-family: 'Orbitron', sans-serif; font-size: 0.75rem; color: var(--accent); }
+  .axis-val { font-family: 'Orbitron', sans-serif; font-size: 0.72rem; color: var(--accent); }
   .axis-track { height: 6px; border-radius: 3px; background: var(--surface2); position: relative; overflow: hidden; }
   .axis-fill { height: 100%; border-radius: 3px; transition: width 0.1s; position: absolute; left: 0; top: 0; }
-  .axis-fill.x { background: #ff2d55; }
-  .axis-fill.y { background: #00d4ff; }
-  .axis-fill.z { background: #00ff88; }
+  .axis-fill.x { background: linear-gradient(90deg, #ff2d55, #ff6b8a); }
+  .axis-fill.y { background: linear-gradient(90deg, #00b4d8, #00d4ff); }
+  .axis-fill.z { background: linear-gradient(90deg, #00cc6a, #00ff88); }
 
   .score-ring { position: relative; width: 120px; height: 120px; margin: 0 auto 12px; }
   .score-ring svg { transform: rotate(-90deg); }
@@ -536,28 +629,161 @@
   .score-ring .ring-fill { fill: none; stroke: var(--accent); stroke-width: 8; stroke-linecap: round; stroke-dasharray: 314; stroke-dashoffset: 314; transition: stroke-dashoffset 0.6s ease, stroke 0.3s; }
   .score-num { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
   .score-num span:first-child { font-family: 'Orbitron', sans-serif; font-size: 1.6rem; font-weight: 900; color: var(--accent); line-height: 1; }
-  .score-num span:last-child { font-size: 0.6rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+  .score-num span:last-child { font-size: 0.58rem; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
 
   .log-list { list-style: none; max-height: 140px; overflow-y: auto; scrollbar-width: thin; scrollbar-color: var(--border) transparent; }
-  .log-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(26,58,92,0.5); font-size: 0.72rem; animation: fadeIn 0.3s ease; }
+  .log-item { display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid rgba(26,58,92,0.3); font-size: 0.72rem; animation: fadeIn 0.3s ease; }
   .log-item:last-child { border-bottom: none; }
   .log-icon { font-size: 0.8rem; }
   .log-msg { color: var(--text); }
-  .log-time { margin-left: auto; color: var(--muted); font-size: 0.65rem; font-family: 'Orbitron', sans-serif; }
+  .log-time { margin-left: auto; color: var(--muted); font-size: 0.62rem; font-family: 'Orbitron', sans-serif; }
   @keyframes fadeIn { from{opacity:0;transform:translateY(-4px)} to{opacity:1;transform:none} }
+
+  /* ===== SHOT HISTORY PANEL ===== */
+  .shots-panel {
+    margin-top: 14px;
+  }
+  .shots-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+  .shot-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .shot-card:hover { border-color: var(--accent); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.3); }
+  .shot-card.active { border-color: var(--accent); background: rgba(0,212,255,0.08); }
+  .shot-card::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  }
+  .shot-card.excellent::before { background: var(--green); }
+  .shot-card.good::before { background: var(--accent); }
+  .shot-card.average::before { background: var(--accent2); }
+  .shot-card.poor::before { background: var(--red); }
+  .shot-number {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.6rem; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .shot-speed {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.2rem; font-weight: 700;
+    color: var(--accent);
+  }
+  .shot-speed .unit { font-size: 0.6rem; color: var(--muted); }
+  .shot-meta {
+    font-size: 0.65rem; color: var(--muted);
+    margin-top: 4px;
+  }
+  .shot-direction-badge {
+    display: inline-block;
+    font-size: 0.55rem; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    padding: 2px 8px; border-radius: 100px;
+    margin-top: 6px;
+  }
+  .shot-direction-badge.leg { background: rgba(0,212,255,0.15); color: var(--accent); border: 1px solid rgba(0,212,255,0.3); }
+  .shot-direction-badge.off { background: rgba(255,107,0,0.15); color: var(--accent2); border: 1px solid rgba(255,107,0,0.3); }
+  .shot-direction-badge.straight { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+
+  /* Shot Detail Overlay */
+  .shot-detail-overlay {
+    display: none;
+    position: fixed; inset: 0;
+    background: rgba(4,8,16,0.85);
+    backdrop-filter: blur(10px);
+    z-index: 200;
+    padding: 60px 20px;
+    overflow-y: auto;
+  }
+  .shot-detail-overlay.visible { display: flex; justify-content: center; align-items: flex-start; }
+  .shot-detail-content {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    max-width: 800px;
+    width: 100%;
+    padding: 32px;
+    position: relative;
+    animation: fadeIn 0.3s ease;
+  }
+  .shot-detail-close {
+    position: absolute; top: 16px; right: 16px;
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 1.2rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .shot-detail-close:hover { border-color: var(--red); color: var(--red); }
+  .shot-detail-header {
+    margin-bottom: 24px;
+  }
+  .shot-detail-header h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.1rem; font-weight: 700;
+    letter-spacing: 2px; color: var(--accent);
+    margin-bottom: 4px;
+  }
+  .shot-detail-header p { font-size: 0.8rem; color: var(--muted); }
+  .shot-detail-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .shot-detail-metric {
+    text-align: center;
+    padding: 16px 12px;
+    background: var(--surface2);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+  }
+  .shot-detail-metric .label {
+    font-size: 0.58rem; font-weight: 600;
+    letter-spacing: 2px; text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .shot-detail-metric .value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.4rem; font-weight: 700;
+    color: var(--accent);
+  }
+  .shot-detail-metric .value .unit { font-size: 0.6rem; color: var(--muted); }
+  .shot-detail-chart {
+    margin-top: 16px;
+  }
 
   /* Toast */
   .toast-container { position: fixed; top: 80px; right: 24px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; }
   .toast {
-    padding: 12px 20px; border-radius: 10px;
+    padding: 12px 20px; border-radius: 12px;
     font-size: 0.82rem; font-weight: 500;
     backdrop-filter: blur(10px);
     animation: slideIn 0.3s ease;
     border: 1px solid var(--border);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.3);
   }
-  .toast-success { background: rgba(0,255,136,0.15); color: var(--green); border-color: rgba(0,255,136,0.3); }
-  .toast-error { background: rgba(255,45,85,0.15); color: var(--red); border-color: rgba(255,45,85,0.3); }
-  .toast-info { background: rgba(0,212,255,0.15); color: var(--accent); border-color: rgba(0,212,255,0.3); }
+  .toast-success { background: rgba(0,255,136,0.12); color: var(--green); border-color: rgba(0,255,136,0.25); }
+  .toast-error { background: rgba(255,45,85,0.12); color: var(--red); border-color: rgba(255,45,85,0.25); }
+  .toast-info { background: rgba(0,212,255,0.12); color: var(--accent); border-color: rgba(0,212,255,0.25); }
   @keyframes slideIn { from{opacity:0;transform:translateX(40px)} to{opacity:1;transform:none} }
 
   /* Loading spinner */
@@ -575,20 +801,48 @@
   }
   .loading-state p { color: var(--muted); font-size: 0.8rem; margin-top: 12px; }
 
+  /* Chart Navigation */
+  .chart-nav {
+    display: flex; align-items: center; gap: 8px;
+    margin-top: 10px;
+  }
+  .chart-nav-btn {
+    font-family: 'Inter', sans-serif;
+    font-size: 0.65rem; font-weight: 600;
+    padding: 5px 12px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .chart-nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .chart-nav-btn.active { background: rgba(0,212,255,0.1); border-color: var(--accent); color: var(--accent); }
+  .chart-nav-info {
+    flex: 1;
+    font-size: 0.65rem;
+    color: var(--muted);
+    text-align: center;
+  }
+
   /* Responsive */
   @media (max-width: 1024px) {
-    .stats-grid { grid-template-columns: repeat(2, 1fr); }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); }
     .content-grid { grid-template-columns: 1fr; }
     .dashboard { grid-template-columns: repeat(2, 1fr); }
     .chart-card.span3 { grid-column: span 2; }
     .chart-card.span4 { grid-column: span 2; }
     .main-container { padding: 16px; }
+    .shot-detail-metrics { grid-template-columns: repeat(2, 1fr); }
   }
   @media (max-width: 600px) {
-    .stats-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
     .dashboard { grid-template-columns: 1fr; }
     .chart-card.span2, .chart-card.span3, .chart-card.span4 { grid-column: span 1; }
-    header { padding: 12px 16px; }
+    header { padding: 10px 14px; }
+    .shot-detail-metrics { grid-template-columns: 1fr 1fr; }
+    .shots-grid { grid-template-columns: 1fr 1fr; }
   }
 </style>
 </head>
@@ -596,7 +850,10 @@
 
 <!-- ===== HEADER ===== -->
 <header>
-  <div class="logo">SWING<span>LAB</span></div>
+  <div class="logo">
+    <div class="logo-icon">🏏</div>
+    SWING<span>LAB</span>
+  </div>
   <div class="header-nav">
     <button class="nav-btn active" id="navHome" onclick="showView('home')">🏠 Home</button>
     <button class="nav-btn" id="navLive" onclick="showView('live')">📡 Live</button>
@@ -622,7 +879,7 @@
   <div class="welcome-banner">
     <div class="welcome-text">
       <h1>Welcome back, <span class="highlight" id="userName">Player</span> 🏏</h1>
-      <p>Here's your training overview. Connect your bat sensor or start a demo to begin.</p>
+      <p>Here's your training overview. Connect your bat sensor or start a demo to begin analyzing swings.</p>
     </div>
     <div style="display:flex;gap:10px;">
       <button class="nav-btn accent" onclick="startDemoMode()">🎮 Start Demo</button>
@@ -657,6 +914,18 @@
       <div class="stat-label">Total Swings</div>
       <div class="stat-value" id="statSwings">0</div>
     </div>
+  </div>
+
+  <!-- Recent Shots History -->
+  <div class="card" id="homeShotsCard" style="display:none;margin-top:20px;">
+    <div class="card-header">
+      <div class="card-title">🏏 Recent Shots</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <div class="card-badge" id="homeShotCount">0 shots</div>
+        <button class="nav-btn" onclick="clearShotHistory()" style="font-size:0.6rem;padding:5px 10px;">CLEAR</button>
+      </div>
+    </div>
+    <div class="shots-grid" id="homeShotsGrid" style="margin-top:12px;"></div>
   </div>
 
   <!-- Content Grid -->
@@ -702,12 +971,27 @@
 <!-- ===== LIVE DASHBOARD VIEW ===== -->
 <div class="main-container" id="liveView">
   <div class="live-header">
-    <h2>🔴 LIVE SESSION <span id="liveMode" style="color:var(--muted);font-size:0.7rem;font-weight:400;margin-left:8px;"></span></h2>
+    <h2><div class="rec-dot"></div> LIVE SESSION <span id="liveMode" style="color:var(--muted);font-size:0.7rem;font-weight:400;margin-left:8px;"></span></h2>
     <div class="live-controls">
-      <button class="btn btn-start" onclick="startRec()">&#9654; START SESSION</button>
-      <button class="btn btn-stop" onclick="stopRec()">&#9632; STOP &amp; ANALYZE</button>
+      <button class="btn btn-swing" id="startShotBtn" onclick="startShot()">🏏 START SHOT</button>
+      <button class="btn btn-stop" id="stopShotBtn" onclick="stopShot()" style="display:none;">■ STOP & SAVE SHOT</button>
       <button class="btn btn-back" onclick="goBackHome()">← BACK</button>
     </div>
+  </div>
+
+  <!-- Shot Status Bar -->
+  <div class="swing-control">
+    <div class="swing-info">
+      <h3 id="swingStatusText">READY TO SWING</h3>
+      <p id="swingHelpText">Click START SHOT, swing the bat, then click STOP to save the shot. Each start→stop = one shot.</p>
+    </div>
+    <div class="shot-counter" id="shotCounterDisplay">0</div>
+  </div>
+
+  <!-- Shot History Strip -->
+  <div class="chart-card span4 shots-panel" id="shotsPanel" style="display:none;">
+    <div class="card-title">Shot History — Click a shot to view details</div>
+    <div class="shots-grid" id="shotsGrid"></div>
   </div>
 
   <div class="dashboard" id="dashboardGrid">
@@ -737,8 +1021,14 @@
     </div>
 
     <div class="chart-card span3">
-      <div class="card-title">Live Swing Speed (km/h)</div>
-      <canvas id="speedChart" height="90"></canvas>
+      <div class="card-title">Session Speed Graph (km/h) — All Shots</div>
+      <canvas id="speedChart" height="100"></canvas>
+      <div class="chart-nav">
+        <button class="chart-nav-btn" onclick="scrollChartLeft()">◀ Earlier</button>
+        <span class="chart-nav-info" id="chartNavInfo">Showing live data</span>
+        <button class="chart-nav-btn" onclick="scrollChartRight()">Later ▶</button>
+        <button class="chart-nav-btn active" onclick="scrollChartToEnd()">LIVE ●</button>
+      </div>
     </div>
 
     <div class="chart-card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;">
@@ -753,11 +1043,11 @@
           <span>/ 100</span>
         </div>
       </div>
-      <div style="font-size:0.7rem;color:var(--muted);text-align:center;letter-spacing:1px;" id="scoreLabel">READY</div>
+      <div style="font-size:0.68rem;color:var(--muted);text-align:center;letter-spacing:1px;" id="scoreLabel">READY</div>
     </div>
 
-    <div class="chart-card span2">
-      <div class="card-title">3D Bat Orientation</div>
+    <div class="chart-card span3">
+      <div class="card-title">3D Batsman Visualization</div>
       <div id="threeContainer"></div>
     </div>
 
@@ -768,7 +1058,7 @@
         <div><div class="axis-label"><span class="axis-name" style="color:#00d4ff;">GY - Pitch</span><span class="axis-val" id="gyVal">0.00</span></div><div class="axis-track"><div class="axis-fill y" id="gyBar" style="width:0%"></div></div></div>
         <div><div class="axis-label"><span class="axis-name" style="color:#00ff88;">GZ - Yaw</span><span class="axis-val" id="gzVal">0.00</span></div><div class="axis-track"><div class="axis-fill z" id="gzBar" style="width:0%"></div></div></div>
       </div>
-      <div style="height:16px;"></div>
+      <div style="height:14px;"></div>
       <div class="card-title">Accelerometer</div>
       <div class="axis-bars">
         <div><div class="axis-label"><span class="axis-name" style="color:#ff2d55;">AX</span><span class="axis-val" id="axVal">0.00</span></div><div class="axis-track"><div class="axis-fill x" id="axBar" style="width:0%"></div></div></div>
@@ -806,8 +1096,25 @@
   </div>
 </div>
 
+<!-- ===== SHOT DETAIL OVERLAY ===== -->
+<div class="shot-detail-overlay" id="shotDetailOverlay">
+  <div class="shot-detail-content" id="shotDetailContent">
+    <button class="shot-detail-close" onclick="closeShotDetail()">✕</button>
+    <div class="shot-detail-header">
+      <h2 id="shotDetailTitle">Shot #1</h2>
+      <p id="shotDetailSub">Details for this swing</p>
+    </div>
+    <div class="shot-detail-metrics" id="shotDetailMetrics"></div>
+    <div class="shot-detail-chart">
+      <div class="card-title">Speed Profile for this Shot</div>
+      <canvas id="shotDetailChart" height="100"></canvas>
+    </div>
+  </div>
+</div>
+
 <!-- ===== SCRIPTS ===== -->
 <script src="/js/firebase-config.js"></script>
+<script src="/js/three-bat.js"></script>
 <script>
 // ===== FIREBASE AUTH CHECK =====
 var currentUser = null;
@@ -816,7 +1123,6 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeFirebase();
 
   if (isDemoMode) {
-    // Demo/no-firebase mode
     var demoUser = JSON.parse(localStorage.getItem('cricpro_demo_user') || 'null');
     if (!demoUser) {
       window.location.href = '/';
@@ -825,7 +1131,6 @@ document.addEventListener('DOMContentLoaded', function() {
     currentUser = demoUser;
     setupDashboard(demoUser.displayName || demoUser.email || 'Player');
   } else {
-    // Firebase auth check
     firebaseAuth.onAuthStateChanged(function(user) {
       if (user) {
         currentUser = user;
@@ -842,6 +1147,7 @@ function setupDashboard(name) {
   document.getElementById('userAvatar').textContent = name.charAt(0).toUpperCase();
   loadUserStats();
   loadSessionHistory();
+  loadHomeShotHistory();
 }
 
 function handleLogout() {
@@ -866,20 +1172,26 @@ function showView(view) {
   if (view === 'live') {
     setTimeout(function() {
       initCharts();
-      init3D();
+      initThree();
     }, 100);
   }
 }
 
 function goBackHome() {
   if (demoRunning) stopDemoSimulation();
+  if (recording) endSession();
   showView('home');
   loadUserStats();
   loadSessionHistory();
+  loadHomeShotHistory();
 }
 
 // ===== LOAD USER STATS =====
 async function loadUserStats() {
+  // First, populate from localStorage shots (always available)
+  updateStatsFromLocalShots();
+
+  // Then try to load from API (may override with server data)
   try {
     var token = isDemoMode ? 'demo-token' : (currentUser ? await currentUser.getIdToken() : null);
     var headers = { 'Content-Type': 'application/json' };
@@ -888,16 +1200,45 @@ async function loadUserStats() {
     var res = await fetch('/api/profile', { headers: headers });
     var data = await res.json();
 
-    if (data.stats) {
+    if (data.stats && data.stats.total_sessions > 0) {
       document.getElementById('statSessions').textContent = data.stats.total_sessions || 0;
-      document.getElementById('statBestSpeed').innerHTML = (data.stats.avg_speed || 0) + '<span class="unit">km/h</span>';
-      document.getElementById('statOffSide').textContent = data.stats.off_side_shots || 0;
-      document.getElementById('statLegSide').textContent = data.stats.leg_side_shots || 0;
-      document.getElementById('statSwings').textContent = data.stats.total_swings || 0;
+      if (data.stats.avg_speed) document.getElementById('statBestSpeed').innerHTML = (data.stats.avg_speed || 0) + '<span class="unit">km/h</span>';
+      if (data.stats.off_side_shots) document.getElementById('statOffSide').textContent = data.stats.off_side_shots;
+      if (data.stats.leg_side_shots) document.getElementById('statLegSide').textContent = data.stats.leg_side_shots;
+      if (data.stats.total_swings) document.getElementById('statSwings').textContent = data.stats.total_swings;
     }
   } catch (e) {
-    console.warn('[Stats] Could not load:', e);
+    console.warn('[Stats] API unavailable, using local data');
   }
+}
+
+// Populate stats from localStorage shot history
+function updateStatsFromLocalShots() {
+  try {
+    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    if (history.length === 0) return;
+
+    var bestSpeed = 0, offCount = 0, legCount = 0, straightCount = 0;
+    var totalAccuracy = 0;
+
+    history.forEach(function(s) {
+      if (s.peakSpeed > bestSpeed) bestSpeed = s.peakSpeed;
+      if (s.direction === 'off') offCount++;
+      else if (s.direction === 'leg') legCount++;
+      else straightCount++;
+      totalAccuracy += (s.accuracy || 0);
+    });
+
+    document.getElementById('statSwings').textContent = history.length;
+    document.getElementById('statBestSpeed').innerHTML = bestSpeed.toFixed(1) + '<span class="unit">km/h</span>';
+    document.getElementById('statOffSide').textContent = offCount;
+    document.getElementById('statLegSide').textContent = legCount;
+    // Sessions = approximate (group by different timestamps)
+    var sessions = new Set(history.map(function(s) {
+      return new Date(s.timestamp).toDateString();
+    }));
+    document.getElementById('statSessions').textContent = sessions.size;
+  } catch(e) { console.warn('Could not update stats:', e); }
 }
 
 // ===== LOAD SESSION HISTORY =====
@@ -988,7 +1329,7 @@ function stopDemoSimulation() {
   }
 }
 
-// ===== BLE Config (must match ESP32 firmware) =====
+// ===== BLE Config =====
 var BLE_SERVICE_UUID = '4fafc201-1fb5-459e-8fcc-c5c9c331914b';
 var BLE_SENSOR_UUID  = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 
@@ -996,11 +1337,18 @@ var BLE_SENSOR_UUID  = 'beb5483e-36e1-4688-b7f5-ea07361b26a8';
 var bleDevice = null;
 var bleSensorChar = null;
 var bleActive = false;
-var recording = false;
-var session = [];
+var recording = false;      // Currently recording a shot (start→stop)
+var session = [];           // All data for whole session
+var currentSwingData = [];  // Data for the current shot
+var allShots = [];          // Stored shots array (each item = one shot)
+var allSpeedData = [];      // Full speed data (never truncated)
+var allAccelData = [];      // Full accel data
 var trajectory = [];
 var frameCount = 0;
 var speedChart, accelChart;
+var smoothedSpeed = 0;
+var chartViewStart = -1;    // -1 means live / auto scroll
+var CHART_WINDOW = 200;     // Points visible at once
 
 // ===== CONNECT BLE =====
 async function connectBLE() {
@@ -1052,7 +1400,7 @@ async function finishConnect() {
   showView('live');
   document.getElementById('liveMode').textContent = '(BLUETOOTH)';
   initCharts();
-  init3D();
+  initThree();
 
   showToast('Bluetooth connected to ' + (bleDevice.name || 'device') + '!', 'success');
   logEvent('✅', 'Bluetooth connected! Ready to swing.');
@@ -1067,7 +1415,8 @@ function disconnectBLE() {
 function onDisconnected() {
   bleActive = false;
   bleSensorChar = null;
-  recording = false;
+  swingRecording = false;
+  sessionActive = false;
 
   document.getElementById('bleDot').classList.remove('connected');
   document.getElementById('bleText').textContent = 'NO SENSOR';
@@ -1079,19 +1428,19 @@ function onDisconnected() {
 }
 
 // ===== BLE Data Handler =====
-var smoothedSpeed = 0;
-
 function onSensorData(event) {
   var dv = event.target.value;
   if (dv.byteLength < 14) return;
 
   var d = {
-    ax: dv.getInt16(0, true) / 16384.0,
-    ay: dv.getInt16(2, true) / 16384.0,
-    az: dv.getInt16(4, true) / 16384.0,
-    gx: dv.getInt16(6, true) / 131.0,
-    gy: dv.getInt16(8, true) / 131.0,
-    gz: dv.getInt16(10, true) / 131.0
+    // Accel: ±8g range → 4096 LSB/g
+    ax: dv.getInt16(0, true) / 4096.0,
+    ay: dv.getInt16(2, true) / 4096.0,
+    az: dv.getInt16(4, true) / 4096.0,
+    // Gyro: ±2000°/s range → 16.4 LSB/(°/s)
+    gx: dv.getInt16(6, true) / 16.4,
+    gy: dv.getInt16(8, true) / 16.4,
+    gz: dv.getInt16(10, true) / 16.4
   };
 
   processData(d);
@@ -1100,24 +1449,38 @@ function onSensorData(event) {
 // ===== Process Sensor Data =====
 function processData(d) {
   if (!recording) return;
+
+  // Always collect data
   session.push(d);
+  currentSwingData.push(d);
 
+  // --- SPEED CALCULATION ---
+  // Gyro values are already in °/s (firmware sends calibrated data ÷ 16.4)
+  // Angular velocity = magnitude of rotation vector
   var angularVelocity = Math.sqrt(d.gx*d.gx + d.gy*d.gy + d.gz*d.gz);
-  if (angularVelocity < 10) angularVelocity = 0;
 
-  var batSpeedMps = angularVelocity * (Math.PI / 180) * 0.55;
-  var speed = batSpeedMps * 3.6;
-  speed = Math.min(speed, 160);
-  smoothedSpeed = smoothedSpeed * 0.7 + speed * 0.3;
+  // Dead zone: firmware calibrates gyro at boot, so small threshold is fine
+  if (angularVelocity < 5) angularVelocity = 0;
+
+  // Bat tip speed = ω (rad/s) × bat_length (meters)
+  // Cricket bat: pivot (wrist) to sweet spot = 0.85m
+  // Then convert m/s → km/h (× 3.6)
+  // Example: 1000°/s → 17.45 rad/s × 0.85m = 14.83 m/s = 53.4 km/h
+  var speedKmh = angularVelocity * (Math.PI / 180) * 0.85 * 3.6;
+  speedKmh = Math.min(speedKmh, 180);
+
+  // Light smoothing — 30% previous + 70% current (preserves peaks)
+  smoothedSpeed = smoothedSpeed * 0.3 + speedKmh * 0.7;
 
   var acc = Math.sqrt(d.ax*d.ax + d.ay*d.ay + d.az*d.az);
 
-  if (speedChart) {
-    speedChart.data.labels.push('');
-    speedChart.data.datasets[0].data.push(+smoothedSpeed.toFixed(1));
-    if (speedChart.data.labels.length > 80) { speedChart.data.labels.shift(); speedChart.data.datasets[0].data.shift(); }
-    speedChart.update('none');
-  }
+  // Store in full arrays (never truncated)
+  allSpeedData.push(+smoothedSpeed.toFixed(1));
+  allAccelData.push(+acc.toFixed(2));
+
+  // Update charts with windowed view
+  updateChartView();
+
   if (accelChart) {
     accelChart.data.labels.push('');
     accelChart.data.datasets[0].data.push(+acc.toFixed(2));
@@ -1125,17 +1488,94 @@ function processData(d) {
     accelChart.update('none');
   }
 
-  if (typeof update3D === 'function') update3D(d);
+  // 3D bat update - use advanced three-bat.js with full batsman
+  if (typeof update3DBat === 'function') {
+    update3DBat(d.gy, d.gx, d.gz, acc);
+  } else if (typeof update3D === 'function') {
+    update3D(d);
+  }
+
   updateAxisBars(d);
   updateShotDirection(d);
 
-  var batL = 0.55;
-  trajectory.push({ x: Math.sin(d.gy * Math.PI/180)*batL, y: Math.sin(d.gx * Math.PI/180)*batL, z: Math.cos(d.gz * Math.PI/180)*batL });
+  trajectory.push({ x: Math.sin(d.gy * Math.PI/180)*0.85, y: Math.sin(d.gx * Math.PI/180)*0.85, z: Math.cos(d.gz * Math.PI/180)*0.85 });
   frameCount++;
-  if (frameCount % 10 === 0) drawTrajectory();
 
   document.getElementById('valSpeed').innerHTML = smoothedSpeed.toFixed(1) + '<span class="kpi-unit">km/h</span>';
   document.getElementById('valImpact').innerHTML = acc.toFixed(1) + '<span class="kpi-unit">g</span>';
+}
+
+// ===== Chart with scrollback =====
+function updateChartView() {
+  if (!speedChart) return;
+
+  var total = allSpeedData.length;
+  var start, end;
+
+  if (chartViewStart === -1) {
+    // Live mode — show latest data
+    start = Math.max(0, total - CHART_WINDOW);
+    end = total;
+  } else {
+    start = chartViewStart;
+    end = Math.min(start + CHART_WINDOW, total);
+  }
+
+  var visibleData = allSpeedData.slice(start, end);
+  var labels = [];
+  for (var i = 0; i < visibleData.length; i++) labels.push(start + i);
+
+  // Mark shot boundaries with annotations
+  speedChart.data.labels = labels;
+  speedChart.data.datasets[0].data = visibleData;
+
+  // Update point sizes — highlight peaks of each shot
+  var pointRadii = new Array(visibleData.length).fill(0);
+  var pointColors = new Array(visibleData.length).fill('rgba(0,212,255,0.8)');
+
+  allShots.forEach(function(shot) {
+    if (shot.peakIndex >= start && shot.peakIndex < end) {
+      var idx = shot.peakIndex - start;
+      pointRadii[idx] = 6;
+      pointColors[idx] = '#ff6b00';
+    }
+  });
+
+  speedChart.data.datasets[0].pointRadius = pointRadii;
+  speedChart.data.datasets[0].pointBackgroundColor = pointColors;
+
+  speedChart.update('none');
+
+  // Update nav info
+  var info = document.getElementById('chartNavInfo');
+  if (chartViewStart === -1) {
+    info.textContent = 'LIVE · ' + total + ' data points · ' + allShots.length + ' shots';
+  } else {
+    info.textContent = 'Viewing ' + (start+1) + '–' + end + ' of ' + total + ' · ' + allShots.length + ' shots';
+  }
+}
+
+function scrollChartLeft() {
+  if (allSpeedData.length <= CHART_WINDOW) return;
+  if (chartViewStart === -1) {
+    chartViewStart = Math.max(0, allSpeedData.length - CHART_WINDOW);
+  }
+  chartViewStart = Math.max(0, chartViewStart - Math.floor(CHART_WINDOW / 2));
+  updateChartView();
+}
+
+function scrollChartRight() {
+  if (chartViewStart === -1) return;
+  chartViewStart += Math.floor(CHART_WINDOW / 2);
+  if (chartViewStart + CHART_WINDOW >= allSpeedData.length) {
+    chartViewStart = -1; // Back to live
+  }
+  updateChartView();
+}
+
+function scrollChartToEnd() {
+  chartViewStart = -1;
+  updateChartView();
 }
 
 // ===== Charts =====
@@ -1144,10 +1584,33 @@ function initCharts() {
 
   var defaults = {
     responsive: true, animation: false,
-    plugins: { legend: { display: false } },
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        backgroundColor: 'rgba(12,20,35,0.95)',
+        titleColor: '#00d4ff',
+        bodyColor: '#e0eaf5',
+        borderColor: 'rgba(30,65,110,0.5)',
+        borderWidth: 1,
+        padding: 10,
+        cornerRadius: 8,
+        titleFont: { family: 'Orbitron', size: 11 },
+        bodyFont: { family: 'Inter', size: 12 },
+        callbacks: {
+          label: function(ctx) {
+            return ctx.dataset.label + ': ' + ctx.parsed.y;
+          }
+        }
+      }
+    },
     scales: {
       x: { display: false },
-      y: { grid: { color: 'rgba(26,58,92,0.5)' }, ticks: { color: '#4a6a8a', font: { size: 10 } }, border: { color: 'rgba(26,58,92,0.5)' } }
+      y: {
+        grid: { color: 'rgba(26,58,92,0.3)' },
+        ticks: { color: '#4a6a8a', font: { size: 10 } },
+        border: { color: 'rgba(26,58,92,0.3)' }
+      }
     }
   };
 
@@ -1155,7 +1618,20 @@ function initCharts() {
   if (sc) {
     speedChart = new Chart(sc, {
       type: 'line',
-      data: { labels: [], datasets: [{ data: [], borderColor: '#00d4ff', backgroundColor: 'rgba(0,212,255,0.08)', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true }] },
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Speed (km/h)',
+          data: [],
+          borderColor: '#00d4ff',
+          backgroundColor: 'rgba(0,212,255,0.06)',
+          borderWidth: 2,
+          pointRadius: 0,
+          pointHoverRadius: 5,
+          tension: 0.35,
+          fill: true
+        }]
+      },
       options: { ...defaults, scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0 } } }
     });
   }
@@ -1164,25 +1640,53 @@ function initCharts() {
   if (ac) {
     accelChart = new Chart(ac, {
       type: 'line',
-      data: { labels: [], datasets: [{ data: [], borderColor: '#ff6b00', backgroundColor: 'rgba(255,107,0,0.08)', borderWidth: 2, pointRadius: 0, tension: 0.4, fill: true }] },
+      data: {
+        labels: [],
+        datasets: [{
+          label: 'Accel (g)',
+          data: [],
+          borderColor: '#ff6b00',
+          backgroundColor: 'rgba(255,107,0,0.06)',
+          borderWidth: 2,
+          pointRadius: 0,
+          tension: 0.35,
+          fill: true
+        }]
+      },
       options: { ...defaults, scales: { ...defaults.scales, y: { ...defaults.scales.y, min: 0 } } }
     });
   }
 }
 
-// ===== 3D Scene =====
-var batGroup, trajLine, threeRenderer;
+// ===== 3D Scene using three-bat.js =====
+var threeInitialized = false;
 
-function init3D() {
+function initThree() {
+  if (threeInitialized) return;
   var container = document.getElementById('threeContainer');
-  if (!container || threeRenderer) return;
+  if (!container) return;
+
+  if (typeof init3DBat === 'function') {
+    init3DBat('threeContainer');
+    threeInitialized = true;
+  } else {
+    // Fallback internal 3D
+    initFallback3D();
+  }
+}
+
+// Fallback 3D if three-bat.js not loaded
+var batGroup_fb, threeRenderer_fb;
+function initFallback3D() {
+  var container = document.getElementById('threeContainer');
+  if (!container || threeRenderer_fb) return;
 
   var scene = new THREE.Scene();
-  var camera = new THREE.PerspectiveCamera(60, container.offsetWidth / 280, 0.1, 1000);
-  threeRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-  threeRenderer.setSize(container.offsetWidth, 280);
-  threeRenderer.setClearColor(0x050a10, 1);
-  container.appendChild(threeRenderer.domElement);
+  var camera = new THREE.PerspectiveCamera(60, container.offsetWidth / 300, 0.1, 1000);
+  threeRenderer_fb = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+  threeRenderer_fb.setSize(container.offsetWidth, 300);
+  threeRenderer_fb.setClearColor(0x050a10, 1);
+  container.appendChild(threeRenderer_fb.domElement);
   camera.position.set(0, 1, 5);
 
   scene.add(new THREE.AmbientLight(0x224466, 1.5));
@@ -1190,57 +1694,441 @@ function init3D() {
   dir.position.set(5, 5, 5);
   scene.add(dir);
 
-  batGroup = new THREE.Group();
-
+  batGroup_fb = new THREE.Group();
   var handle = new THREE.Mesh(
     new THREE.CylinderGeometry(0.07, 0.07, 1.0, 16),
     new THREE.MeshPhongMaterial({ color: 0x8B5E3C, shininess: 80 })
   );
   handle.position.y = -1.1;
-  batGroup.add(handle);
+  batGroup_fb.add(handle);
 
-  var bladeGeo = new THREE.BoxGeometry(0.45, 1.5, 0.07);
-  var blade = new THREE.Mesh(bladeGeo, new THREE.MeshPhongMaterial({ color: 0xd4a96a, shininess: 120 }));
+  var blade = new THREE.Mesh(
+    new THREE.BoxGeometry(0.45, 1.5, 0.07),
+    new THREE.MeshPhongMaterial({ color: 0xd4a96a, shininess: 120 })
+  );
   blade.position.y = 0.3;
-  batGroup.add(blade);
-
-  var edges = new THREE.LineSegments(
-    new THREE.EdgesGeometry(bladeGeo),
-    new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.4 })
-  );
-  edges.position.y = 0.3;
-  batGroup.add(edges);
-
-  trajLine = new THREE.Line(
-    new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: 0xffff00, transparent: true, opacity: 0.7 })
-  );
-  scene.add(trajLine);
-  scene.add(batGroup);
+  batGroup_fb.add(blade);
+  scene.add(batGroup_fb);
 
   var grid = new THREE.GridHelper(8, 16, 0x1a3a5c, 0x0d1520);
   grid.position.y = -2.5;
   scene.add(grid);
+  threeInitialized = true;
 
   (function animate() {
     requestAnimationFrame(animate);
-    threeRenderer.render(scene, camera);
+    threeRenderer_fb.render(scene, camera);
   })();
 }
 
 function update3D(d) {
-  if (!batGroup) return;
-  batGroup.rotation.x += (d.gx * 0.005 - batGroup.rotation.x) * 0.15;
-  batGroup.rotation.y += (d.gy * 0.005 - batGroup.rotation.y) * 0.15;
-  batGroup.rotation.z += (d.gz * 0.005 - batGroup.rotation.z) * 0.15;
+  if (batGroup_fb) {
+    batGroup_fb.rotation.x += (d.gx * 0.005 - batGroup_fb.rotation.x) * 0.15;
+    batGroup_fb.rotation.y += (d.gy * 0.005 - batGroup_fb.rotation.y) * 0.15;
+    batGroup_fb.rotation.z += (d.gz * 0.005 - batGroup_fb.rotation.z) * 0.15;
+  }
 }
 
-function drawTrajectory() {
-  if (!trajLine || trajectory.length < 2) return;
-  var pts = trajectory.map(function(p){ return new THREE.Vector3(p.x*2, p.y*2, p.z*2); });
-  var geo = new THREE.BufferGeometry().setFromPoints(pts);
-  trajLine.geometry.dispose();
-  trajLine.geometry = geo;
+// ===== SHOT CONTROLS (Start = begin recording, Stop = save shot) =====
+function startShot() {
+  if (!bleActive && !demoRunning) { showToast('Connect sensor or start demo first!', 'error'); return; }
+
+  recording = true;
+  currentSwingData = [];
+  smoothedSpeed = 0;
+  trajectory = [];
+  frameCount = 0;
+
+  // Reset chart only on first shot of a session
+  if (allShots.length === 0) {
+    session = [];
+    allSpeedData = [];
+    allAccelData = [];
+    if (speedChart) { speedChart.data.labels=[]; speedChart.data.datasets[0].data=[]; speedChart.update('none'); }
+    if (accelChart) { accelChart.data.labels=[]; accelChart.data.datasets[0].data=[]; accelChart.update('none'); }
+  }
+
+  chartViewStart = -1;
+
+  document.getElementById('statusDot').classList.add('live');
+  document.getElementById('statusText').textContent = 'RECORDING';
+  document.getElementById('startShotBtn').style.display = 'none';
+  document.getElementById('stopShotBtn').style.display = '';
+  document.getElementById('swingStatusText').textContent = 'RECORDING SHOT #' + (allShots.length + 1);
+  document.getElementById('swingHelpText').textContent = 'Swing the bat now! Click STOP when done to save this shot.';
+
+  ['kpiSpeed','kpiImpact','kpiControl','kpiFollow'].forEach(function(id){ document.getElementById(id).classList.add('active'); });
+  document.getElementById('valSpeed').innerHTML = '--<span class="kpi-unit">km/h</span>';
+  document.getElementById('valImpact').innerHTML = '--<span class="kpi-unit">g</span>';
+  document.getElementById('valControl').textContent = '--';
+  document.getElementById('valFollow').textContent = '--';
+  ['badgeSpeed','badgeImpact','badgeControl','badgeFollow'].forEach(function(id){ var el=document.getElementById(id); el.textContent='RECORDING'; el.className='kpi-badge'; });
+
+  // Reset 3D bat position for new swing
+  if (typeof resetBat3D === 'function') resetBat3D();
+
+  // If demo mode, start simulation
+  if (demoRunning && !demoInterval) {
+    startDemoData();
+  }
+
+  logEvent('🏏', 'Shot #' + (allShots.length + 1) + ' recording started');
+  showToast('Recording shot #' + (allShots.length + 1) + ' — swing now!', 'info');
+}
+
+function stopShot() {
+  if (!recording) return;
+  recording = false;
+
+  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
+
+  document.getElementById('statusDot').classList.remove('live');
+  document.getElementById('statusText').textContent = 'ANALYZING';
+  document.getElementById('startShotBtn').style.display = '';
+  document.getElementById('stopShotBtn').style.display = 'none';
+
+  // Analyze this shot
+  var shot = analyzeSwingData(currentSwingData, allShots.length + 1);
+  allShots.push(shot);
+
+  document.getElementById('shotCounterDisplay').textContent = allShots.length;
+  document.getElementById('swingStatusText').textContent = 'SHOT #' + allShots.length + ' SAVED — ' + shot.peakSpeed.toFixed(1) + ' km/h';
+  document.getElementById('swingHelpText').textContent = 'Shot saved! Click START SHOT for the next one, or click a shot to review.';
+  document.getElementById('statusText').textContent = 'READY';
+
+  // Add shot card to UI
+  addShotCard(shot);
+  document.getElementById('shotsPanel').style.display = '';
+
+  // Update live KPIs with latest shot
+  updateKPIsFromShot(shot);
+
+  // Show AI analysis after each shot
+  showSessionSummary();
+
+  // Persist shot to localStorage for home page history
+  saveShotToHistory(shot);
+
+  logEvent('✅', 'Shot #' + allShots.length + ': ' + shot.peakSpeed.toFixed(1) + ' km/h | ' + shot.direction.toUpperCase());
+  showToast('Shot #' + allShots.length + ' saved: ' + shot.peakSpeed.toFixed(1) + ' km/h', 'success');
+}
+
+// ===== Analyze a single swing's data =====
+function analyzeSwingData(data, shotNumber) {
+  var peakSpeed = 0, peakImpact = 0, gyVals = [], lastGZ = 0, peakIndex = -1;
+  var speedsForShot = [];
+
+  data.forEach(function(s, idx) {
+    var angularVelocity = Math.sqrt(s.gx*s.gx + s.gy*s.gy + s.gz*s.gz);
+    if (angularVelocity < 5) angularVelocity = 0;
+    var speed = angularVelocity * (Math.PI / 180) * 0.85 * 3.6;
+    speed = Math.min(speed, 180);
+    var acc = Math.sqrt(s.ax*s.ax + s.ay*s.ay + s.az*s.az);
+
+    speedsForShot.push(speed);
+
+    if (speed > peakSpeed) {
+      peakSpeed = speed;
+      peakIndex = idx;
+    }
+    if (acc > peakImpact) peakImpact = acc;
+    gyVals.push(s.gy);
+    lastGZ = s.gz;
+  });
+
+  // Control score
+  var mean = gyVals.length ? gyVals.reduce(function(a,b){return a+b;},0)/gyVals.length : 0;
+  var variance = gyVals.length ? gyVals.reduce(function(a,b){return a+Math.pow(b-mean,2);},0)/gyVals.length : 0;
+  var controlScore = Math.max(0, Math.min(100, 100 - Math.sqrt(variance) * 20));
+
+  // Accuracy — based on control + sweetspot hit
+  var accuracy = Math.round(controlScore * 0.5 + (peakImpact > 15 ? 30 : peakImpact > 8 ? 20 : 10) + (peakSpeed > 60 ? 20 : peakSpeed > 30 ? 15 : 5));
+  accuracy = Math.min(100, accuracy);
+
+  // Direction
+  var direction = 'straight';
+  if (lastGZ > 1) direction = 'leg';
+  else if (lastGZ < -1) direction = 'off';
+
+  // Follow through
+  var followGrade = peakImpact > 20 ? 'STRONG' : peakImpact > 12 ? 'DECENT' : 'WEAK';
+
+  // Quality grade
+  var grade = accuracy >= 80 ? 'excellent' : accuracy >= 60 ? 'good' : accuracy >= 40 ? 'average' : 'poor';
+
+  // Compute the global index of the peak in allSpeedData
+  var globalPeakIndex = allSpeedData.length - data.length + peakIndex;
+
+  return {
+    number: shotNumber,
+    peakSpeed: peakSpeed,
+    peakImpact: peakImpact,
+    controlScore: Math.round(controlScore),
+    accuracy: accuracy,
+    direction: direction,
+    followGrade: followGrade,
+    grade: grade,
+    dataPoints: data.length,
+    speedProfile: speedsForShot,
+    peakIndex: globalPeakIndex,
+    timestamp: new Date()
+  };
+}
+
+// ===== Add shot card to grid =====
+function addShotCard(shot) {
+  var grid = document.getElementById('shotsGrid');
+  var card = document.createElement('div');
+  card.className = 'shot-card ' + shot.grade;
+  card.onclick = function() { showShotDetail(shot); };
+  card.innerHTML =
+    '<div class="shot-number">Shot #' + shot.number + '</div>' +
+    '<div class="shot-speed">' + shot.peakSpeed.toFixed(1) + '<span class="unit"> km/h</span></div>' +
+    '<div class="shot-meta">Accuracy: ' + shot.accuracy + '% · Impact: ' + shot.peakImpact.toFixed(1) + 'g</div>' +
+    '<div class="shot-direction-badge ' + shot.direction + '">' + shot.direction.toUpperCase() + '</div>';
+  grid.appendChild(card);
+}
+
+// ===== Update KPIs from shot =====
+function updateKPIsFromShot(shot) {
+  document.getElementById('valSpeed').innerHTML = shot.peakSpeed.toFixed(1) + '<span class="kpi-unit">km/h</span>';
+  document.getElementById('valImpact').innerHTML = shot.peakImpact.toFixed(1) + '<span class="kpi-unit">g</span>';
+  document.getElementById('valControl').textContent = shot.controlScore;
+  document.getElementById('valFollow').textContent = shot.followGrade;
+
+  var sb = function(id,t,c){ var el=document.getElementById(id); el.textContent=t; el.className='kpi-badge'+(c?' '+c:''); };
+  sb('badgeSpeed', shot.peakSpeed>80?'POWER HIT':shot.peakSpeed>50?'MODERATE':'SOFT', shot.peakSpeed>80?'':'warn');
+  sb('badgeImpact', shot.peakImpact>20?'HARD HIT':'GENTLE', shot.peakImpact>20?'':'warn');
+  sb('badgeControl', shot.controlScore>=75?'EXCELLENT':shot.controlScore>=50?'MODERATE':'IMPROVE', shot.controlScore>=75?'':shot.controlScore>=50?'warn':'danger');
+  sb('badgeFollow', shot.followGrade, shot.followGrade==='STRONG'?'':shot.followGrade==='DECENT'?'warn':'danger');
+
+  updateScore(shot.peakSpeed, shot.peakImpact);
+}
+
+// ===== Show Shot Detail =====
+var shotDetailChart = null;
+
+function showShotDetail(shot) {
+  document.getElementById('shotDetailOverlay').classList.add('visible');
+  document.getElementById('shotDetailTitle').textContent = 'Shot #' + shot.number + ' Analysis';
+  document.getElementById('shotDetailSub').textContent =
+    shot.direction.toUpperCase() + ' · ' + shot.timestamp.toLocaleTimeString() + ' · ' + shot.dataPoints + ' data points';
+
+  var metricsDiv = document.getElementById('shotDetailMetrics');
+  metricsDiv.innerHTML =
+    '<div class="shot-detail-metric"><div class="label">Peak Speed</div><div class="value">' + shot.peakSpeed.toFixed(1) + '<span class="unit"> km/h</span></div></div>' +
+    '<div class="shot-detail-metric"><div class="label">Impact</div><div class="value">' + shot.peakImpact.toFixed(1) + '<span class="unit"> g</span></div></div>' +
+    '<div class="shot-detail-metric"><div class="label">Accuracy</div><div class="value">' + shot.accuracy + '<span class="unit">%</span></div></div>' +
+    '<div class="shot-detail-metric"><div class="label">Control</div><div class="value">' + shot.controlScore + '<span class="unit">/100</span></div></div>';
+
+  // Draw the shot's speed profile chart
+  if (shotDetailChart) { shotDetailChart.destroy(); shotDetailChart = null; }
+
+  var canvas = document.getElementById('shotDetailChart');
+
+  // Handle empty speedProfile (e.g. loaded from localStorage)
+  if (!shot.speedProfile || shot.speedProfile.length === 0) {
+    canvas.style.display = 'none';
+    var noDataMsg = document.createElement('div');
+    noDataMsg.style.cssText = 'text-align:center;padding:30px;color:var(--muted);font-size:0.85rem;';
+    noDataMsg.innerHTML = '<div style="font-size:1.5rem;margin-bottom:8px;">📊</div>Speed profile graph available only for live-recorded shots.<br>Start a new shot to see the detailed graph.';
+    canvas.parentNode.appendChild(noDataMsg);
+    noDataMsg.id = 'shotDetailNoData';
+    return;
+  }
+
+  // Remove any previous no-data message
+  var oldMsg = document.getElementById('shotDetailNoData');
+  if (oldMsg) oldMsg.remove();
+  canvas.style.display = '';
+
+  var labels = shot.speedProfile.map(function(_, i) { return i; });
+
+  // Find peak for annotation
+  var peakIdx = shot.speedProfile.indexOf(Math.max.apply(null, shot.speedProfile));
+  var pointRadii = shot.speedProfile.map(function(_, i) { return i === peakIdx ? 8 : 0; });
+  var pointBgs = shot.speedProfile.map(function(_, i) { return i === peakIdx ? '#ff6b00' : 'transparent'; });
+
+  shotDetailChart = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Speed (km/h)',
+        data: shot.speedProfile.map(function(s) { return +(typeof s === 'number' ? s : 0).toFixed(1); }),
+        borderColor: '#00d4ff',
+        backgroundColor: 'rgba(0,212,255,0.08)',
+        borderWidth: 2,
+        pointRadius: pointRadii,
+        pointBackgroundColor: pointBgs,
+        pointBorderColor: pointBgs,
+        tension: 0.4,
+        fill: true
+      }]
+    },
+    options: {
+      responsive: true, animation: { duration: 600 },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(12,20,35,0.95)',
+          titleColor: '#00d4ff',
+          bodyColor: '#e0eaf5',
+          borderColor: 'rgba(30,65,110,0.5)',
+          borderWidth: 1,
+          padding: 10,
+          cornerRadius: 8
+        }
+      },
+      scales: {
+        x: { display: false },
+        y: {
+          min: 0,
+          grid: { color: 'rgba(26,58,92,0.3)' },
+          ticks: { color: '#4a6a8a' },
+          border: { color: 'rgba(26,58,92,0.3)' }
+        }
+      }
+    }
+  });
+}
+
+function closeShotDetail() {
+  document.getElementById('shotDetailOverlay').classList.remove('visible');
+}
+
+// Close on overlay click
+document.addEventListener('click', function(e) {
+  if (e.target.id === 'shotDetailOverlay') closeShotDetail();
+});
+
+// ===== END SESSION (called by goBackHome) =====
+function endSession() {
+  recording = false;
+  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
+
+  document.getElementById('statusDot').classList.remove('live');
+  document.getElementById('statusText').textContent = 'COMPLETE';
+  document.getElementById('startShotBtn').style.display = '';
+  document.getElementById('stopShotBtn').style.display = 'none';
+
+  document.getElementById('swingStatusText').textContent = 'SESSION COMPLETE — ' + allShots.length + ' SHOTS RECORDED';
+  document.getElementById('swingHelpText').textContent = 'Click on any shot card to view detailed analysis.';
+
+  if (allShots.length > 0) {
+    showSessionSummary();
+  }
+
+  logEvent('✅', 'Session ended with ' + allShots.length + ' shots');
+  showToast('Session complete! ' + allShots.length + ' shots recorded.', 'success');
+}
+
+function showSessionSummary() {
+  var avgSpeed = 0, avgAccuracy = 0, bestSpeed = 0, totalImpact = 0;
+  var legCount = 0, offCount = 0, straightCount = 0;
+
+  allShots.forEach(function(s) {
+    avgSpeed += s.peakSpeed;
+    avgAccuracy += s.accuracy;
+    if (s.peakSpeed > bestSpeed) bestSpeed = s.peakSpeed;
+    totalImpact += s.peakImpact;
+    if (s.direction === 'leg') legCount++;
+    else if (s.direction === 'off') offCount++;
+    else straightCount++;
+  });
+
+  avgSpeed /= allShots.length;
+  avgAccuracy /= allShots.length;
+
+  var overallScore = Math.min(100, Math.round(avgSpeed * 0.4 + avgAccuracy * 0.6));
+
+  var card = document.getElementById('aiAnalysisCard');
+  if (!card) { card = document.createElement('div'); card.id='aiAnalysisCard'; card.className='chart-card span4'; document.getElementById('dashboardGrid').appendChild(card); }
+
+  var analysis = aiCoachAnalysis(bestSpeed, totalImpact / allShots.length, avgAccuracy, allShots[allShots.length-1].direction === 'leg' ? 2 : allShots[allShots.length-1].direction === 'off' ? -2 : 0);
+  var mkList = function(arr, fallback) { return arr.length ? arr.map(function(x){return '<li style="margin-bottom:8px;font-size:0.85rem;">'+x+'</li>';}).join('') : '<li style="color:var(--muted);">'+fallback+'</li>'; };
+
+  card.innerHTML =
+    '<div class="card-title" style="color:var(--accent2);">SESSION SUMMARY — AI COACH ANALYSIS</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin:16px 0;">' +
+      '<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">' +
+        '<div style="font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">SHOTS</div>' +
+        '<div style="font-family:Orbitron;font-size:1.4rem;font-weight:700;color:var(--accent);">' + allShots.length + '</div></div>' +
+      '<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">' +
+        '<div style="font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">AVG SPEED</div>' +
+        '<div style="font-family:Orbitron;font-size:1.4rem;font-weight:700;color:var(--accent);">' + avgSpeed.toFixed(1) + '</div></div>' +
+      '<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">' +
+        '<div style="font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">BEST SPEED</div>' +
+        '<div style="font-family:Orbitron;font-size:1.4rem;font-weight:700;color:var(--green);">' + bestSpeed.toFixed(1) + '</div></div>' +
+      '<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">' +
+        '<div style="font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">AVG ACCURACY</div>' +
+        '<div style="font-family:Orbitron;font-size:1.4rem;font-weight:700;color:var(--gold);">' + avgAccuracy.toFixed(0) + '%</div></div>' +
+      '<div style="text-align:center;padding:12px;background:var(--surface2);border-radius:10px;border:1px solid var(--border);">' +
+        '<div style="font-size:0.58rem;color:var(--muted);letter-spacing:2px;margin-bottom:6px;">SCORE</div>' +
+        '<div style="font-family:Orbitron;font-size:1.4rem;font-weight:700;color:' + (overallScore >= 70 ? 'var(--green)' : 'var(--accent2)') + ';">' + overallScore + '</div></div>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;">' +
+    '<div><div style="color:var(--green);margin-bottom:8px;font-size:0.72rem;letter-spacing:2px;">✦ STRENGTHS</div><ul style="list-style:none;padding:0;">'+mkList(analysis.strengths,'Keep practicing!')+'</ul></div>' +
+    '<div><div style="color:var(--accent);margin-bottom:8px;font-size:0.72rem;letter-spacing:2px;">💡 TIPS</div><ul style="list-style:none;padding:0;">'+mkList(analysis.tips,'No tips')+'</ul></div>' +
+    '<div><div style="color:var(--accent2);margin-bottom:8px;font-size:0.72rem;letter-spacing:2px;">⚠ CORRECTIONS</div><ul style="list-style:none;padding:0;">'+mkList(analysis.corrections,'No corrections needed')+'</ul></div>' +
+    '</div>' +
+    '<div style="margin-top:16px;padding:14px;background:rgba(0,212,255,0.08);border-radius:10px;border-left:3px solid var(--accent);">' +
+    '<span style="font-size:0.78rem;opacity:0.9;">' + analysis.summary + '</span></div>' +
+    '<div style="margin-top:10px;font-size:0.65rem;color:var(--muted);">SwingLab AI Coach v2.0 | ' + session.length + ' data points · ' + allShots.length + ' shots analyzed</div>';
+
+  updateScore(bestSpeed, avgAccuracy);
+}
+
+// ===== DEMO DATA =====
+function startDemoData() {
+  var t = 0;
+
+  demoInterval = setInterval(function() {
+    if (!recording) return;
+
+    // 80-tick cycle: one clean swing with single peak
+    var phase = (t % 80) / 80.0;
+    var d;
+
+    if (phase < 0.25) {
+      // Backlift — quiet preparation
+      d = {
+        ax: Math.random()*0.5 - 0.25,
+        ay: 0.9 + Math.random()*0.2,
+        az: Math.random()*0.4 - 0.2,
+        gx: Math.sin(phase*8) * 15,   // slight backlift motion
+        gy: 5 + Math.random()*5,
+        gz: (Math.random()-0.5) * 8
+      };
+    } else if (phase < 0.5) {
+      // SWING — single powerful peak (realistic gyro values 200-900 deg/s)
+      var swingProgress = (phase - 0.25) / 0.25;
+      var intensity = Math.sin(swingProgress * Math.PI); // Single smooth peak
+      var peakGyro = 400 + Math.random() * 500; // 400-900 deg/s range
+      d = {
+        ax: intensity * 8,
+        ay: intensity * 6,
+        az: intensity * 4,
+        gx: -intensity * peakGyro * 0.3,
+        gy: intensity * peakGyro,       // Main swing axis
+        gz: [-1.5, 0, 1.5][Math.floor(Math.random()*3)] * intensity * peakGyro * 0.15
+      };
+    } else {
+      // Follow through — smooth decay
+      var decay = Math.max(0, 1 - (phase - 0.5) * 3);
+      d = {
+        ax: decay * Math.random() * 2,
+        ay: 1 + decay * 0.5,
+        az: decay * (Math.random() - 0.5),
+        gx: -decay * 40,
+        gy: decay * 60,
+        gz: (Math.random() - 0.5) * decay * 20
+      };
+    }
+
+    processData(d);
+    t++;
+  }, 25);
 }
 
 // ===== Helpers =====
@@ -1301,8 +2189,8 @@ function updateShotDirection(d) {
   else { straight.classList.add('active'); label.textContent = 'STRAIGHT DRIVE'; label.style.color = '#00ff88'; }
 }
 
-function updateScore(speed, impact) {
-  var score = Math.min(100, Math.round(speed*0.6 + impact*1.4));
+function updateScore(speed, metric2) {
+  var score = Math.min(100, Math.round(speed*0.6 + metric2*0.4));
   document.getElementById('scoreNum').textContent = score;
   var offset = 314 - (score/100)*314;
   var ring = document.getElementById('scoreFill');
@@ -1338,121 +2226,90 @@ function aiCoachAnalysis(peakSpeed, peakImpact, controlScore, lastShotGZ) {
   return {tips:tips, corrections:corrections, strengths:strengths, summary:summary};
 }
 
-function showAIAnalysis(peakSpeed, peakImpact, controlScore, lastShotGZ) {
-  var a = aiCoachAnalysis(peakSpeed, peakImpact, controlScore, lastShotGZ);
-  var card = document.getElementById('aiAnalysisCard');
-  if (!card) { card = document.createElement('div'); card.id='aiAnalysisCard'; card.className='chart-card span4'; document.getElementById('dashboardGrid').appendChild(card); }
-  var mkList = function(arr, fallback) { return arr.length ? arr.map(function(x){return '<li style="margin-bottom:8px;font-size:0.85rem;">'+x+'</li>';}).join('') : '<li style="color:var(--muted);">'+fallback+'</li>'; };
-  card.innerHTML =
-    '<div class="card-title" style="color:var(--accent2);">AI COACH ANALYSIS</div>' +
-    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;">' +
-    '<div><div style="color:var(--green);margin-bottom:8px;">STRENGTHS</div><ul style="list-style:none;padding:0;">'+mkList(a.strengths,'Keep practicing!')+'</ul></div>' +
-    '<div><div style="color:var(--accent);margin-bottom:8px;">TIPS</div><ul style="list-style:none;padding:0;">'+mkList(a.tips,'No tips')+'</ul></div>' +
-    '<div><div style="color:var(--accent2);margin-bottom:8px;">CORRECTIONS</div><ul style="list-style:none;padding:0;">'+mkList(a.corrections,'No corrections needed')+'</ul></div>' +
-    '<div><div style="color:var(--green);margin-bottom:8px;">SUMMARY</div><div style="font-size:0.9rem;line-height:1.5;">'+a.summary+'</div></div>' +
-    '</div>' +
-    '<div style="margin-top:16px;padding:12px;background:rgba(0,212,255,0.1);border-radius:8px;border-left:3px solid var(--accent);">' +
-    '<span style="font-size:0.75rem;opacity:0.8;">SwingLab AI Coach v1.0 | '+session.length+' data points analyzed</span></div>';
+// ===== SHOT HISTORY PERSISTENCE (localStorage) =====
+function saveShotToHistory(shot) {
+  try {
+    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    history.unshift({
+      number: shot.number,
+      peakSpeed: +shot.peakSpeed.toFixed(1),
+      peakImpact: +shot.peakImpact.toFixed(1),
+      accuracy: shot.accuracy,
+      controlScore: shot.controlScore,
+      direction: shot.direction,
+      followGrade: shot.followGrade,
+      grade: shot.grade,
+      dataPoints: shot.dataPoints,
+      speedProfile: shot.speedProfile || [],
+      timestamp: shot.timestamp.toISOString()
+    });
+    // Keep last 50 shots
+    if (history.length > 50) history = history.slice(0, 50);
+    localStorage.setItem('swinglab_shots', JSON.stringify(history));
+  } catch(e) { console.warn('Could not save shot:', e); }
 }
 
-// ===== Session Controls =====
-function startRec() {
-  if (!bleActive && !demoRunning) { showToast('Connect sensor or start demo first!', 'error'); return; }
-  recording = true;
-  session = []; trajectory = []; frameCount = 0;
-  if (speedChart) { speedChart.data.labels=[]; speedChart.data.datasets[0].data=[]; speedChart.update('none'); }
-  if (accelChart) { accelChart.data.labels=[]; accelChart.data.datasets[0].data=[]; accelChart.update('none'); }
-  document.getElementById('statusDot').classList.add('live');
-  document.getElementById('statusText').textContent = 'RECORDING';
-  ['kpiSpeed','kpiImpact','kpiControl','kpiFollow'].forEach(function(id){ document.getElementById(id).classList.add('active'); });
-  document.getElementById('valSpeed').innerHTML = '--<span class="kpi-unit">km/h</span>';
-  document.getElementById('valImpact').innerHTML = '--<span class="kpi-unit">g</span>';
-  document.getElementById('valControl').textContent = '--';
-  document.getElementById('valFollow').textContent = '--';
-  ['badgeSpeed','badgeImpact','badgeControl','badgeFollow'].forEach(function(id){ var el=document.getElementById(id); el.textContent='RECORDING'; el.className='kpi-badge'; });
-  var aiCard = document.getElementById('aiAnalysisCard'); if (aiCard) aiCard.remove();
+function loadHomeShotHistory() {
+  try {
+    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    var card = document.getElementById('homeShotsCard');
+    var grid = document.getElementById('homeShotsGrid');
+    var countEl = document.getElementById('homeShotCount');
 
-  // If demo mode, start simulation
-  if (demoRunning) {
-    startDemoData();
-  }
-
-  logEvent('▶', 'Session started - swing the bat!');
-  showToast('Recording started!', 'success');
-}
-
-function startDemoData() {
-  var t = 0;
-  demoInterval = setInterval(function() {
-    var phase = (t % 100) / 100.0;
-    var d;
-
-    if (phase < 0.3) {
-      d = { ax: Math.random()*0.6-0.3, ay: 0.8+Math.random()*0.4, az: Math.random()*0.6-0.3, gx: Math.sin(phase*10)*3, gy: 0.5, gz: Math.random()-0.5 };
-    } else if (phase < 0.5) {
-      var intensity = Math.sin((phase-0.3)/0.2*Math.PI);
-      d = { ax: intensity*4, ay: intensity*3, az: intensity*2, gx: -intensity*6, gy: intensity*8, gz: [-1,0,1][Math.floor(Math.random()*3)]*intensity*2 };
-    } else {
-      var decay = Math.max(0, 1-(phase-0.5)*4);
-      d = { ax: decay*Math.random(), ay: 1+decay*0.5, az: decay*(Math.random()-0.5), gx: -decay*2, gy: decay*3, gz: (Math.random()*0.6-0.3)*decay };
+    if (history.length === 0) {
+      card.style.display = 'none';
+      return;
     }
 
-    processData(d);
-    t++;
-  }, 20);
+    card.style.display = '';
+    countEl.textContent = history.length + ' shot' + (history.length !== 1 ? 's' : '');
+    grid.innerHTML = '';
+
+    history.forEach(function(s) {
+      var time = new Date(s.timestamp);
+      var timeStr = time.toLocaleDateString('en-IN', { day:'numeric', month:'short' }) + ' ' +
+                    time.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+      var div = document.createElement('div');
+      div.className = 'shot-card ' + s.grade;
+      div.innerHTML =
+        '<div class="shot-number">Shot #' + s.number + '</div>' +
+        '<div class="shot-speed">' + s.peakSpeed + '<span class="unit"> km/h</span></div>' +
+        '<div class="shot-meta">Accuracy: ' + s.accuracy + '% · ' + s.direction.toUpperCase() + '</div>' +
+        '<div class="shot-meta" style="color:var(--muted);font-size:0.62rem;">' + timeStr + '</div>' +
+        '<div class="shot-direction-badge ' + s.direction + '">' + s.direction.toUpperCase() + '</div>';
+      div.onclick = function() {
+        showShotDetail({
+          number: s.number,
+          peakSpeed: s.peakSpeed,
+          peakImpact: s.peakImpact,
+          accuracy: s.accuracy,
+          controlScore: s.controlScore,
+          direction: s.direction,
+          followGrade: s.followGrade,
+          grade: s.grade,
+          dataPoints: s.dataPoints,
+          timestamp: time,
+          speedProfile: s.speedProfile || []
+        });
+      };
+      grid.appendChild(div);
+    });
+  } catch(e) { console.warn('Could not load shot history:', e); }
 }
 
-function stopRec() {
-  recording = false;
-  if (demoInterval) { clearInterval(demoInterval); demoInterval = null; }
-  document.getElementById('statusDot').classList.remove('live');
-  document.getElementById('statusText').textContent = 'ANALYZING';
-  setTimeout(function(){
-    analyzeSwing();
-    drawTrajectory();
-    document.getElementById('statusText').textContent = 'COMPLETE';
-    logEvent('✅', 'Analysis complete');
-    showToast('Session analysis complete!', 'success');
-  }, 200);
+function clearShotHistory() {
+  if (confirm('Clear all shot history?')) {
+    localStorage.removeItem('swinglab_shots');
+    document.getElementById('homeShotsCard').style.display = 'none';
+    document.getElementById('homeShotsGrid').innerHTML = '';
+    showToast('Shot history cleared', 'info');
+  }
 }
 
-function analyzeSwing() {
-  if (!session.length) return;
-  var peakSpeed=0, peakImpact=0, gyVals=[], lastGZ=0;
-  session.forEach(function(s){
-    var angularVelocity = Math.sqrt(s.gx*s.gx + s.gy*s.gy + s.gz*s.gz);
-    if (angularVelocity < 10) angularVelocity = 0;
-    var batSpeedMps = angularVelocity * (Math.PI / 180) * 0.55;
-    var speed = batSpeedMps * 3.6;
-    speed = Math.min(speed, 160);
-    var acc = Math.sqrt(s.ax*s.ax+s.ay*s.ay+s.az*s.az);
-    if (speed>peakSpeed) peakSpeed=speed;
-    if (acc>peakImpact) peakImpact=acc;
-    gyVals.push(s.gy); lastGZ=s.gz;
-  });
-  var mean = gyVals.reduce(function(a,b){return a+b;},0)/gyVals.length;
-  var variance = gyVals.reduce(function(a,b){return a+Math.pow(b-mean,2);},0)/gyVals.length;
-  var controlScore = Math.max(0, 100-Math.sqrt(variance)*20).toFixed(0);
-  var controlGrade = controlScore>=75?'EXCELLENT':controlScore>=50?'MODERATE':'IMPROVE';
-  var followGrade = peakImpact>20?'STRONG':peakImpact>12?'DECENT':'WEAK';
-
-  document.getElementById('valSpeed').innerHTML = peakSpeed.toFixed(1)+'<span class="kpi-unit">km/h</span>';
-  document.getElementById('valImpact').innerHTML = peakImpact.toFixed(1)+'<span class="kpi-unit">g</span>';
-  document.getElementById('valControl').textContent = controlScore;
-  document.getElementById('valFollow').textContent = followGrade;
-
-  var sb = function(id,t,c){ var el=document.getElementById(id); el.textContent=t; el.className='kpi-badge'+(c?' '+c:''); };
-  sb('badgeSpeed', peakSpeed>80?'POWER HIT':peakSpeed>50?'MODERATE':'SOFT', peakSpeed>80?'':'warn');
-  sb('badgeImpact', peakImpact>20?'HARD HIT':'GENTLE', peakImpact>20?'':'warn');
-  sb('badgeControl', controlGrade, controlGrade==='EXCELLENT'?'':controlGrade==='MODERATE'?'warn':'danger');
-  sb('badgeFollow', followGrade, followGrade==='STRONG'?'':followGrade==='DECENT'?'warn':'danger');
-
-  updateScore(peakSpeed, peakImpact);
-  showAIAnalysis(peakSpeed, peakImpact, parseFloat(controlScore), lastGZ);
-
-  logEvent('📊', 'Peak: '+peakSpeed.toFixed(1)+' km/h | Impact: '+peakImpact.toFixed(1)+'g');
-  logEvent('📊', 'Control: '+controlScore+'/100 | Follow: '+followGrade);
-}
+// Legacy compatibility
+function startRec() { startShot(); }
+function stopRec() { stopShot(); }
+function startSession() { startShot(); }
 </script>
 </body>
 </html>

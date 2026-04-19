@@ -341,52 +341,31 @@ function animateBat() {
   var toeWorld = toeLocal.clone();
   batGroup.localToWorld(toeWorld);
 
-  var speed = Math.sqrt(
-    Math.pow(batTargetRot.x - batCurrentRot.x, 2) +
-    Math.pow(batTargetRot.y - batCurrentRot.y, 2) +
-    Math.pow(batTargetRot.z - batCurrentRot.z, 2)
-  );
+  // Show a bright marker at the current toe position (always visible)
+  if (!batGroup.userData.toeMarker) {
+    var markerGeo = new THREE.SphereGeometry(0.03, 10, 10);
+    var markerMat = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+    var marker = new THREE.Mesh(markerGeo, markerMat);
+    marker.name = 'toeMarker';
+    batGroup.userData.toeMarker = marker;
+    batScene.add(marker);
+  }
+  batGroup.userData.toeMarker.position.copy(toeWorld);
 
-  // Only add trail point if the bat actually moved (avoid clumping)
+  // Add trail sphere if bat moved enough
   var lastPt = trailPoints.length > 0 ? trailPoints[trailPoints.length - 1] : null;
-  var moved = !lastPt || toeWorld.distanceTo(lastPt.pos) > 0.001;
+  var dist = lastPt ? toeWorld.distanceTo(lastPt.pos) : 999;
   
-  if (moved) {
-    trailPoints.push({ pos: toeWorld.clone(), speed: speed });
+  if (dist > 0.003) {
+    trailPoints.push({ pos: toeWorld.clone() });
     
-    // Add a thick tube segment between last two points
-    if (trailPoints.length >= 2) {
-      var prevPt = trailPoints[trailPoints.length - 2];
-      var currPt = trailPoints[trailPoints.length - 1];
-      var dir = new THREE.Vector3().subVectors(currPt.pos, prevPt.pos);
-      var len = dir.length();
-      
-      if (len > 0.001) {
-        // Tube thickness = bat toe width (~0.04 radius)
-        var tubeRadius = 0.015;
-        var tubeGeo = new THREE.CylinderGeometry(tubeRadius, tubeRadius, len, 6, 1);
-        var tubeMat = new THREE.MeshBasicMaterial({
-          color: 0x39ff14,
-          transparent: false
-        });
-        
-        var tube = new THREE.Mesh(tubeGeo, tubeMat);
-        
-        // Position at midpoint
-        var mid = new THREE.Vector3().addVectors(prevPt.pos, currPt.pos).multiplyScalar(0.5);
-        tube.position.copy(mid);
-        
-        // Rotate to align with direction
-        tube.quaternion.setFromUnitVectors(
-          new THREE.Vector3(0, 1, 0),
-          dir.clone().normalize()
-        );
-        
-        tube.userData.isTrailTube = true;
-        tube.castShadow = true;
-        batScene.add(tube);
-      }
-    }
+    // Drop a solid bright sphere at this position — PERMANENT
+    var sphereGeo = new THREE.SphereGeometry(0.02, 8, 8);
+    var sphereMat = new THREE.MeshBasicMaterial({ color: 0xff2222 });
+    var sphere = new THREE.Mesh(sphereGeo, sphereMat);
+    sphere.position.copy(toeWorld);
+    sphere.userData.isTrailTube = true;
+    batScene.add(sphere);
   }
 
   // Camera slow orbit

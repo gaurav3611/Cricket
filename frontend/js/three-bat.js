@@ -1,10 +1,10 @@
 /**
  * =====================================================
- * SwingLab — 3D Bat + Swing Trace Visualization
+ * SwingLab — 3D Cricket Bat + Swing Path Trace
  * =====================================================
- * A detailed cricket bat that rotates with sensor data.
- * The bat tip draws a glowing trail curve showing the
- * exact swing path trajectory in 3D space.
+ * Realistic cricket bat shape facing downward (resting stance).
+ * Bat rotates in response to sensor data, and a glowing
+ * trail traces the swing arc in 3D space.
  */
 
 let batScene, batCamera, batRenderer, batGroup;
@@ -14,7 +14,7 @@ let batGlowIntensity = 0;
 let sweetSpotMesh = null;
 let gridPulseTime = 0;
 
-// Trail system — records bat tip positions over time
+// Trail
 let trailPoints = [];
 const MAX_TRAIL = 200;
 let trailLine = null;
@@ -24,17 +24,14 @@ function init3DBat(containerId) {
   const container = document.getElementById(containerId);
   if (!container) return;
 
-  // Scene
   batScene = new THREE.Scene();
-  batScene.fog = new THREE.FogExp2(0x020610, 0.04);
+  batScene.fog = new THREE.FogExp2(0x020610, 0.035);
 
-  // Camera — close enough to see bat detail + trail
   const height = container.offsetHeight || 420;
-  batCamera = new THREE.PerspectiveCamera(50, container.offsetWidth / height, 0.1, 100);
-  batCamera.position.set(1.8, 1.2, 2.5);
-  batCamera.lookAt(0, 0.2, 0);
+  batCamera = new THREE.PerspectiveCamera(48, container.offsetWidth / height, 0.1, 100);
+  batCamera.position.set(2.0, 0.8, 2.8);
+  batCamera.lookAt(0, -0.3, 0);
 
-  // Renderer
   batRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
   batRenderer.setSize(container.offsetWidth, height);
   batRenderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -45,49 +42,35 @@ function init3DBat(containerId) {
   batRenderer.toneMappingExposure = 1.8;
   container.appendChild(batRenderer.domElement);
 
-  // Lighting
   setupLighting();
-
-  // Environment
   buildEnvironment();
 
-  // The Bat
-  batGroup = createBat();
-  batGroup.position.set(0, 0, 0);
+  // Build the bat facing DOWN (toe toward ground)
+  batGroup = new THREE.Group();
+  var bat = createRealisticBat();
+  // Rotate so toe points down: rotate 180° around X
+  bat.rotation.x = Math.PI;
+  batGroup.add(bat);
+  batGroup.position.set(0, 0.5, 0);
   batScene.add(batGroup);
 
-  // Trail — main line (bright cyan)
-  const trailGeo = new THREE.BufferGeometry();
-  const trailMat = new THREE.LineBasicMaterial({
-    color: 0x00d4ff,
-    transparent: true,
-    opacity: 0.9,
-    linewidth: 2
-  });
-  trailLine = new THREE.Line(trailGeo, trailMat);
-  trailLine.name = 'trail';
+  // Trail lines
+  var trailGeo = new THREE.BufferGeometry();
+  trailLine = new THREE.Line(trailGeo, new THREE.LineBasicMaterial({
+    color: 0x00d4ff, transparent: true, opacity: 0.9, linewidth: 2
+  }));
   batScene.add(trailLine);
 
-  // Trail glow — wider, dimmer duplicate for bloom effect
-  const glowGeo = new THREE.BufferGeometry();
-  const glowMat = new THREE.LineBasicMaterial({
-    color: 0x00d4ff,
-    transparent: true,
-    opacity: 0.25,
-    linewidth: 4
-  });
-  trailGlowLine = new THREE.Line(glowGeo, glowMat);
-  trailGlowLine.name = 'trailGlow';
+  var glowGeo = new THREE.BufferGeometry();
+  trailGlowLine = new THREE.Line(glowGeo, new THREE.LineBasicMaterial({
+    color: 0x00d4ff, transparent: true, opacity: 0.2, linewidth: 4
+  }));
   batScene.add(trailGlowLine);
 
-  // Trail dots — small spheres at intervals along the path
-  // (created dynamically in the animation loop)
-
-  // Handle resize
-  window.addEventListener('resize', () => {
+  window.addEventListener('resize', function() {
     if (!container || !batRenderer) return;
-    const w = container.offsetWidth;
-    const h = container.offsetHeight || 420;
+    var w = container.offsetWidth;
+    var h = container.offsetHeight || 420;
     batCamera.aspect = w / h;
     batCamera.updateProjectionMatrix();
     batRenderer.setSize(w, h);
@@ -97,195 +80,220 @@ function init3DBat(containerId) {
 }
 
 function setupLighting() {
-  // Ambient — deep blue
   batScene.add(new THREE.AmbientLight(0x1a2a44, 2.5));
 
-  // Key light — bright from top-right
-  const keyLight = new THREE.DirectionalLight(0xffffff, 3.0);
-  keyLight.position.set(3, 6, 4);
+  var keyLight = new THREE.DirectionalLight(0xfff5e6, 3.5);
+  keyLight.position.set(4, 6, 5);
   keyLight.castShadow = true;
   keyLight.shadow.mapSize.set(1024, 1024);
-  keyLight.shadow.bias = -0.001;
   batScene.add(keyLight);
 
-  // Fill — warm orange from left
-  const fillLight = new THREE.PointLight(0xff8844, 1.8, 12);
-  fillLight.position.set(-3, 2, 2);
+  var fillLight = new THREE.PointLight(0xff8844, 1.5, 12);
+  fillLight.position.set(-3, 1, 3);
   batScene.add(fillLight);
 
-  // Rim — cyan from behind for edge glow
-  const rimLight = new THREE.PointLight(0x00d4ff, 2.5, 10);
-  rimLight.position.set(0, 1, -4);
+  var rimLight = new THREE.PointLight(0x00d4ff, 2.5, 10);
+  rimLight.position.set(0, 0, -4);
   batScene.add(rimLight);
 
-  // Bottom accent
-  const bottomLight = new THREE.PointLight(0x6633ff, 0.8, 6);
-  bottomLight.position.set(0, -2, 1);
+  var bottomLight = new THREE.PointLight(0x4422ff, 0.6, 6);
+  bottomLight.position.set(0, -3, 1);
   batScene.add(bottomLight);
 }
 
 function buildEnvironment() {
-  // Ground plane
-  const groundGeo = new THREE.PlaneGeometry(16, 16);
-  const groundMat = new THREE.MeshPhongMaterial({
-    color: 0x010308,
-    transparent: true,
-    opacity: 0.9,
-    side: THREE.DoubleSide,
-    shininess: 100,
-    specular: 0x112233
+  var groundMat = new THREE.MeshPhongMaterial({
+    color: 0x010308, transparent: true, opacity: 0.9,
+    side: THREE.DoubleSide, shininess: 100, specular: 0x112233
   });
-  const ground = new THREE.Mesh(groundGeo, groundMat);
+  var ground = new THREE.Mesh(new THREE.PlaneGeometry(16, 16), groundMat);
   ground.rotation.x = -Math.PI / 2;
-  ground.position.y = -1.5;
+  ground.position.y = -1.8;
   ground.receiveShadow = true;
   batScene.add(ground);
 
-  // Grid
-  const grid = new THREE.GridHelper(12, 48, 0x00d4ff, 0x081420);
-  grid.position.y = -1.49;
+  var grid = new THREE.GridHelper(12, 48, 0x00d4ff, 0x081420);
+  grid.position.y = -1.79;
   grid.material.transparent = true;
-  grid.material.opacity = 0.15;
+  grid.material.opacity = 0.12;
   batScene.add(grid);
-
-  // Center reference circle (pivot point indicator)
-  const ringGeo = new THREE.RingGeometry(0.08, 0.1, 32);
-  const ringMat = new THREE.MeshBasicMaterial({
-    color: 0x00d4ff, transparent: true, opacity: 0.3, side: THREE.DoubleSide
-  });
-  const ring = new THREE.Mesh(ringGeo, ringMat);
-  ring.rotation.x = -Math.PI / 2;
-  ring.position.y = -1.48;
-  batScene.add(ring);
 }
 
-function createBat() {
-  const bat = new THREE.Group();
+// ===== REALISTIC CRICKET BAT =====
+function createRealisticBat() {
+  var bat = new THREE.Group();
 
-  // === HANDLE ===
-  // Grip — rubber with cyan accent
-  const gripMat = new THREE.MeshPhongMaterial({
-    color: 0x00b4d8, shininess: 120,
+  // --- MATERIALS ---
+  // Willow wood — warm natural tone
+  var willowMat = new THREE.MeshPhongMaterial({
+    color: 0xD4A86A, shininess: 80, specular: 0x443322
+  });
+  var willowDarkMat = new THREE.MeshPhongMaterial({
+    color: 0xC89850, shininess: 70
+  });
+  // Handle cane
+  var caneMat = new THREE.MeshPhongMaterial({
+    color: 0x8B6B3D, shininess: 50
+  });
+  // Grip rubber
+  var gripMat = new THREE.MeshPhongMaterial({
+    color: 0x1a1a2e, shininess: 40,
+    emissive: 0x002244, emissiveIntensity: 0.15
+  });
+  // Grip accent
+  var gripAccentMat = new THREE.MeshPhongMaterial({
+    color: 0x00b4d8, shininess: 100,
     emissive: 0x004466, emissiveIntensity: 0.3
   });
-  const grip = new THREE.Mesh(new THREE.CylinderGeometry(0.028, 0.028, 0.3, 16), gripMat);
-  grip.position.y = -0.35;
+
+  // ====== GRIP (bottom) ======
+  // Main rubber grip
+  var grip = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.024, 0.28, 16), gripMat);
+  grip.position.y = -0.36;
   grip.castShadow = true;
   bat.add(grip);
 
-  // Grip texture lines
-  const gripLineMat = new THREE.MeshBasicMaterial({ color: 0x006688, transparent: true, opacity: 0.5 });
-  for (let i = 0; i < 6; i++) {
-    const line = new THREE.Mesh(new THREE.CylinderGeometry(0.03, 0.03, 0.008, 16), gripLineMat);
-    line.position.y = -0.45 + i * 0.04;
-    bat.add(line);
+  // Grip cone at very bottom
+  var gripCone = new THREE.Mesh(new THREE.SphereGeometry(0.026, 12, 12), gripAccentMat);
+  gripCone.position.y = -0.50;
+  bat.add(gripCone);
+
+  // Grip spiral wrapping (rings)
+  for (var i = 0; i < 10; i++) {
+    var ring = new THREE.Mesh(
+      new THREE.TorusGeometry(0.024, 0.003, 6, 16),
+      i % 3 === 0 ? gripAccentMat : gripMat
+    );
+    ring.position.y = -0.46 + i * 0.028;
+    ring.rotation.x = Math.PI / 2;
+    bat.add(ring);
   }
 
-  // Handle — cane
-  const handleMat = new THREE.MeshPhongMaterial({ color: 0x7B4E2C, shininess: 50 });
-  const handle = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.026, 0.2, 12), handleMat);
-  handle.position.y = -0.1;
+  // ====== HANDLE (cane section) ======
+  var handle = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.022, 0.18, 12), caneMat);
+  handle.position.y = -0.13;
   handle.castShadow = true;
   bat.add(handle);
 
-  // === SPLICE / SHOULDER ===
-  const spliceMat = new THREE.MeshPhongMaterial({ color: 0xC4A265, shininess: 80 });
-  const splice = new THREE.Mesh(new THREE.CylinderGeometry(0.026, 0.095, 0.14, 12), spliceMat);
-  splice.position.y = 0.07;
+  // ====== SPLICE / SHOULDER ======
+  // Tapered transition from handle to blade
+  var splice = new THREE.Mesh(new THREE.CylinderGeometry(0.022, 0.065, 0.1, 12), willowDarkMat);
+  splice.position.y = 0.01;
   splice.castShadow = true;
   bat.add(splice);
 
-  // === BLADE — English Willow ===
-  const woodMat = new THREE.MeshPhongMaterial({
-    color: 0xD4A86A, shininess: 90, specular: 0x554422
-  });
+  // Shoulder curve
+  var shoulderCurve = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.085, 0.06, 12), willowMat);
+  shoulderCurve.position.y = 0.09;
+  bat.add(shoulderCurve);
 
-  // Blade face
-  const blade = new THREE.Mesh(new THREE.BoxGeometry(0.2, 0.58, 0.05), woodMat);
-  blade.position.y = 0.43;
-  blade.castShadow = true;
-  bat.add(blade);
+  // ====== BLADE — the hitting face ======
+  // Main blade body — flat front, ridged back
+  // Front face (flat hitting surface)
+  var bladeFront = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.5, 0.032), willowMat);
+  bladeFront.position.set(0, 0.37, 0.008);
+  bladeFront.castShadow = true;
+  bat.add(bladeFront);
 
-  // Blade spine (back ridge)
-  const spineMat = new THREE.MeshPhongMaterial({ color: 0xc89e55, shininess: 70 });
-  const spine = new THREE.Mesh(new THREE.BoxGeometry(0.08, 0.54, 0.025), spineMat);
-  spine.position.set(0, 0.43, -0.035);
+  // Blade edges — slightly thicker on the sides
+  var edgeGeo = new THREE.BoxGeometry(0.02, 0.48, 0.04);
+  var leftEdge = new THREE.Mesh(edgeGeo, willowMat);
+  leftEdge.position.set(-0.065, 0.37, 0);
+  leftEdge.castShadow = true;
+  bat.add(leftEdge);
+
+  var rightEdge = new THREE.Mesh(edgeGeo, willowMat);
+  rightEdge.position.set(0.065, 0.37, 0);
+  rightEdge.castShadow = true;
+  bat.add(rightEdge);
+
+  // Spine (back ridge — gives the bat its "bow")
+  var spine = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.03, 0.46, 8), willowDarkMat);
+  spine.position.set(0, 0.37, -0.028);
+  spine.castShadow = true;
   bat.add(spine);
 
-  // Edge highlights
-  const edgeMat = new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.12 });
-  [-0.1, 0.1].forEach(x => {
-    const edge = new THREE.Mesh(new THREE.BoxGeometry(0.004, 0.56, 0.048), edgeMat);
-    edge.position.set(x, 0.43, 0);
-    bat.add(edge);
-  });
+  // Back shoulders (where spine widens)
+  var backShoulder = new THREE.Mesh(new THREE.CylinderGeometry(0.04, 0.065, 0.08, 8), willowDarkMat);
+  backShoulder.position.set(0, 0.15, -0.02);
+  bat.add(backShoulder);
 
-  // Sticker / brand area
-  const stickerMat = new THREE.MeshBasicMaterial({
-    color: 0xff6b00, transparent: true, opacity: 0.08, side: THREE.DoubleSide
-  });
-  const sticker = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.22), stickerMat);
-  sticker.position.set(0, 0.38, 0.026);
-  bat.add(sticker);
-
-  // Brand line accent
-  const brandLine = new THREE.Mesh(
-    new THREE.BoxGeometry(0.12, 0.004, 0.002),
-    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.35 })
+  // ====== STICKER / BRAND AREA ======
+  var stickerBg = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.08, 0.14),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.06, side: THREE.DoubleSide })
   );
-  brandLine.position.set(0, 0.5, 0.026);
+  stickerBg.position.set(0, 0.34, 0.025);
+  bat.add(stickerBg);
+
+  // Brand line
+  var brandLine = new THREE.Mesh(
+    new THREE.BoxGeometry(0.06, 0.003, 0.001),
+    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.4 })
+  );
+  brandLine.position.set(0, 0.42, 0.025);
   bat.add(brandLine);
 
-  // === SWEET SPOT GLOW ===
+  // Edge highlight lines (subtle)
+  var edgeHighlight = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.06 });
+  [-0.075, 0.075].forEach(function(x) {
+    var line = new THREE.Mesh(new THREE.BoxGeometry(0.002, 0.48, 0.038), edgeHighlight);
+    line.position.set(x, 0.37, 0);
+    bat.add(line);
+  });
+
+  // ====== SWEET SPOT ======
   sweetSpotMesh = new THREE.Mesh(
-    new THREE.SphereGeometry(0.05, 16, 16),
+    new THREE.SphereGeometry(0.035, 14, 14),
     new THREE.MeshPhongMaterial({
-      color: 0xff6b00,
-      emissive: 0xff3300,
-      emissiveIntensity: 0.4,
-      transparent: true,
-      opacity: 0.5
+      color: 0xff6b00, emissive: 0xff3300, emissiveIntensity: 0.4,
+      transparent: true, opacity: 0.5
     })
   );
-  sweetSpotMesh.position.set(0, 0.52, 0.025);
+  sweetSpotMesh.position.set(0, 0.42, 0.025);
   bat.add(sweetSpotMesh);
 
-  // === TOE ===
-  const toe = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 0.035, 0.05),
-    new THREE.MeshPhongMaterial({ color: 0xC8A060, shininess: 80 })
-  );
-  toe.position.y = 0.73;
-  bat.add(toe);
+  // ====== TOE ======
+  // Rounded toe at the bottom of the blade
+  var toeMain = new THREE.Mesh(new THREE.BoxGeometry(0.11, 0.025, 0.032), willowMat);
+  toeMain.position.set(0, 0.625, 0.008);
+  bat.add(toeMain);
 
-  // Toe guard accent
-  const toeGuard = new THREE.Mesh(
-    new THREE.BoxGeometry(0.2, 0.01, 0.05),
-    new THREE.MeshBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.2 })
+  // Toe edges
+  var toeEdgeL = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.025, 0.04), willowMat);
+  toeEdgeL.position.set(-0.065, 0.625, 0);
+  bat.add(toeEdgeL);
+  var toeEdgeR = new THREE.Mesh(new THREE.BoxGeometry(0.02, 0.025, 0.04), willowMat);
+  toeEdgeR.position.set(0.065, 0.625, 0);
+  bat.add(toeEdgeR);
+
+  // Toe guard (white rubber strip)
+  var toeGuard = new THREE.Mesh(
+    new THREE.BoxGeometry(0.15, 0.012, 0.05),
+    new THREE.MeshPhongMaterial({ color: 0xe8e8e8, shininess: 60 })
   );
-  toeGuard.position.y = 0.75;
+  toeGuard.position.set(0, 0.64, 0);
   bat.add(toeGuard);
 
   return bat;
 }
 
-// ===== ANIMATION LOOP =====
+// ===== ANIMATION =====
 function animateBat() {
   requestAnimationFrame(animateBat);
   if (!batGroup || !batRenderer) return;
 
-  // Smooth rotation interpolation
-  const lerp = 0.12;
+  // Smooth interpolation
+  var lerp = 0.12;
   batCurrentRot.x += (batTargetRot.x - batCurrentRot.x) * lerp;
   batCurrentRot.y += (batTargetRot.y - batCurrentRot.y) * lerp;
   batCurrentRot.z += (batTargetRot.z - batCurrentRot.z) * lerp;
 
-  // Apply rotation to bat
   batGroup.rotation.x = batCurrentRot.x;
   batGroup.rotation.y = batCurrentRot.y;
   batGroup.rotation.z = batCurrentRot.z;
 
-  // ===== SWEET SPOT GLOW =====
+  // Sweet spot glow on impact
   if (sweetSpotMesh) {
     if (batGlowIntensity > 0.01) {
       sweetSpotMesh.material.emissiveIntensity = batGlowIntensity * 3;
@@ -299,112 +307,93 @@ function animateBat() {
     }
   }
 
-  // ===== BAT TIP TRAIL — SWING PATH TRACE =====
-  // Track the world position of the bat toe (tip)
-  const tipLocal = new THREE.Vector3(0, 0.75, 0);
-  const tipWorld = tipLocal.clone();
+  // ===== SWING PATH TRACE =====
+  // Track the bat toe (tip) world position
+  // The bat child is rotated 180°, so toe is at y=0.64 in child → maps to y=-0.64 in world-relative
+  var tipLocal = new THREE.Vector3(0, -0.64, 0);
+  var tipWorld = tipLocal.clone();
   batGroup.localToWorld(tipWorld);
 
-  // Also track the sweet spot for a second trail
-  const sweetLocal = new THREE.Vector3(0, 0.52, 0.025);
-  const sweetWorld = sweetLocal.clone();
-  batGroup.localToWorld(sweetWorld);
-
-  // Only add points when the bat is actually moving
-  const speed = Math.sqrt(
+  var speed = Math.sqrt(
     Math.pow(batTargetRot.x - batCurrentRot.x, 2) +
     Math.pow(batTargetRot.y - batCurrentRot.y, 2) +
     Math.pow(batTargetRot.z - batCurrentRot.z, 2)
   );
 
-  trailPoints.push({
-    tip: tipWorld.clone(),
-    sweet: sweetWorld.clone(),
-    speed: speed
-  });
-
+  trailPoints.push({ pos: tipWorld.clone(), speed: speed });
   if (trailPoints.length > MAX_TRAIL) trailPoints.shift();
 
-  // Update trail geometry
+  // Update trail lines
   if (trailPoints.length > 2) {
-    const positions = new Float32Array(trailPoints.length * 3);
-    trailPoints.forEach((p, i) => {
-      positions[i * 3] = p.tip.x;
-      positions[i * 3 + 1] = p.tip.y;
-      positions[i * 3 + 2] = p.tip.z;
+    var positions = new Float32Array(trailPoints.length * 3);
+    trailPoints.forEach(function(p, i) {
+      positions[i * 3] = p.pos.x;
+      positions[i * 3 + 1] = p.pos.y;
+      positions[i * 3 + 2] = p.pos.z;
     });
 
-    // Main trail
     if (trailLine) {
       trailLine.geometry.dispose();
-      const geo = new THREE.BufferGeometry();
+      var geo = new THREE.BufferGeometry();
       geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
       trailLine.geometry = geo;
-
-      // Fade trail based on age: newer = brighter
-      const age = trailPoints.length / MAX_TRAIL;
-      trailLine.material.opacity = 0.3 + age * 0.6;
     }
-
-    // Glow trail (same positions)
     if (trailGlowLine) {
       trailGlowLine.geometry.dispose();
-      const glowGeo = new THREE.BufferGeometry();
-      glowGeo.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3));
-      trailGlowLine.geometry = glowGeo;
+      var gGeo = new THREE.BufferGeometry();
+      gGeo.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3));
+      trailGlowLine.geometry = gGeo;
     }
   }
 
-  // ===== TRAIL DOTS (rendered as small spheres at intervals) =====
-  // Remove old dots
-  const oldDots = batScene.children.filter(c => c.userData && c.userData.isTrailDot);
-  oldDots.forEach(d => { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
+  // Trail dots
+  var oldDots = batScene.children.filter(function(c) { return c.userData && c.userData.isTrailDot; });
+  oldDots.forEach(function(d) { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
 
-  // Add new dots every 10th point
-  for (let i = 0; i < trailPoints.length; i += 8) {
-    const p = trailPoints[i];
-    const alpha = i / trailPoints.length; // 0 = old, 1 = new
-    const dotGeo = new THREE.SphereGeometry(0.012 + alpha * 0.01, 6, 6);
-    const dotMat = new THREE.MeshBasicMaterial({
-      color: p.speed > 0.01 ? 0xff6b00 : 0x00d4ff,
+  for (var i = 0; i < trailPoints.length; i += 6) {
+    var p = trailPoints[i];
+    var alpha = i / trailPoints.length;
+    var dotSize = 0.008 + alpha * 0.012;
+    var dotGeo = new THREE.SphereGeometry(dotSize, 6, 6);
+    var isMoving = p.speed > 0.008;
+    var dotMat = new THREE.MeshBasicMaterial({
+      color: isMoving ? 0xff6b00 : 0x00d4ff,
       transparent: true,
-      opacity: 0.15 + alpha * 0.6
+      opacity: 0.1 + alpha * 0.7
     });
-    const dot = new THREE.Mesh(dotGeo, dotMat);
-    dot.position.copy(p.tip);
+    var dot = new THREE.Mesh(dotGeo, dotMat);
+    dot.position.copy(p.pos);
     dot.userData.isTrailDot = true;
     batScene.add(dot);
   }
 
-  // ===== GENTLE CAMERA ORBIT =====
+  // Camera orbit
   gridPulseTime += 0.005;
-  batCamera.position.x = 1.8 + Math.sin(gridPulseTime * 0.2) * 0.15;
-  batCamera.position.y = 1.2 + Math.cos(gridPulseTime * 0.15) * 0.08;
-  batCamera.lookAt(0, 0.2, 0);
+  batCamera.position.x = 2.0 + Math.sin(gridPulseTime * 0.18) * 0.15;
+  batCamera.position.y = 0.8 + Math.cos(gridPulseTime * 0.12) * 0.06;
+  batCamera.lookAt(0, -0.3, 0);
 
   batRenderer.render(batScene, batCamera);
 }
 
-// ===== SENSOR DATA → 3D ROTATION =====
-let integratedRot = { x: 0, y: 0, z: 0 };
+// ===== SENSOR → ROTATION =====
+var integratedRot = { x: 0, y: 0, z: 0 };
 
 function update3DBat(gy, gx, gz, impact) {
-  const dt = 0.022;
+  var dt = 0.022;
   integratedRot.x += (gx * Math.PI / 180) * dt;
   integratedRot.y += (gy * Math.PI / 180) * dt;
   integratedRot.z += (gz * Math.PI / 180) * dt;
 
-  // Smooth decay back to rest position
   integratedRot.x *= 0.93;
   integratedRot.y *= 0.93;
   integratedRot.z *= 0.93;
 
-  const maxRot = Math.PI / 1.2;
+  var maxRot = Math.PI / 1.2;
   batTargetRot.x = Math.min(maxRot, Math.max(-maxRot, integratedRot.x));
   batTargetRot.y = Math.min(maxRot, Math.max(-maxRot, integratedRot.y));
   batTargetRot.z = Math.min(maxRot, Math.max(-maxRot, integratedRot.z));
 
-  // Trigger glow on impact
   if (impact > 2.0) {
     batGlowIntensity = Math.min(3.5, impact / 3.5);
   }
@@ -414,10 +403,8 @@ function resetBat3D() {
   batTargetRot = { x: 0, y: 0, z: 0 };
   integratedRot = { x: 0, y: 0, z: 0 };
   trailPoints = [];
-
-  // Clear trail dots
   if (batScene) {
-    const dots = batScene.children.filter(c => c.userData && c.userData.isTrailDot);
-    dots.forEach(d => { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
+    var dots = batScene.children.filter(function(c) { return c.userData && c.userData.isTrailDot; });
+    dots.forEach(function(d) { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
   }
 }

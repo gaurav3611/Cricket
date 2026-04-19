@@ -54,13 +54,13 @@ function init3DBat(containerId) {
   // Trail
   trailLine = new THREE.Line(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: 0xffee00, transparent: true, opacity: 0.95, linewidth: 2 })
+    new THREE.LineBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 1.0, linewidth: 2 })
   );
   batScene.add(trailLine);
 
   trailGlowLine = new THREE.Line(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: 0xffee00, transparent: true, opacity: 0.4, linewidth: 4 })
+    new THREE.LineBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.5, linewidth: 4 })
   );
   batScene.add(trailGlowLine);
 
@@ -349,7 +349,7 @@ function animateBat() {
 
   // Only add trail point if the bat actually moved (avoid clumping)
   var lastPt = trailPoints.length > 0 ? trailPoints[trailPoints.length - 1] : null;
-  var moved = !lastPt || toeWorld.distanceTo(lastPt.pos) > 0.005;
+  var moved = !lastPt || toeWorld.distanceTo(lastPt.pos) > 0.001;
   
   if (moved) {
     trailPoints.push({ pos: toeWorld.clone(), speed: speed });
@@ -363,15 +363,11 @@ function animateBat() {
       
       if (len > 0.001) {
         // Tube thickness = bat toe width (~0.04 radius)
-        var tubeRadius = 0.008;
+        var tubeRadius = 0.015;
         var tubeGeo = new THREE.CylinderGeometry(tubeRadius, tubeRadius, len, 6, 1);
-        var tubeMat = new THREE.MeshPhongMaterial({
-          color: 0xffee00,
-          transparent: true,
-          opacity: 0.9,
-          emissive: 0xffee00,
-          emissiveIntensity: 0.5,
-          shininess: 100
+        var tubeMat = new THREE.MeshBasicMaterial({
+          color: 0x39ff14,
+          transparent: false
         });
         
         var tube = new THREE.Mesh(tubeGeo, tubeMat);

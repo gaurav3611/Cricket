@@ -1,157 +1,68 @@
-# 🏏 CricPro — Cricket Bat Swing Analyzer
+# 🏏 SwingLab — Cricket Swing Analytics Dashboard
 
-A professional-grade cricket bat swing analyzer that uses an ESP32 microcontroller with MPU6050 motion sensor to track bat speed, power, timing, and technique in real-time.
+A real-time cricket swing analytics platform with 3D visualization, shot tracking, and performance insights.
 
 ## 🎯 Features
 
-- **Real-Time Bat Speed** — Measures swing velocity up to 150+ km/h
-- **3D Bat Visualization** — Live 3D model responds to sensor data
-- **Shot Direction Analysis** — Detects leg side, off side, and straight drives
-- **Session Recording** — Save and review training sessions
-- **User Authentication** — Secure login with Firebase Auth
-- **Cloud Storage** — Session data stored in Firebase Firestore
-- **Demo Mode** — Test the dashboard without hardware
+- **Real-Time Speed Tracking** — Live bat speed monitoring with dynamic charts
+- **3D Batsman Visualization** — Interactive 3D model with swing animation
+- **Shot-by-Shot Analysis** — Individual shot recording with accuracy, direction & control scores
+- **Shot History** — Persistent shot log with detailed metrics and speed graphs
+- **User Authentication** — Secure login with Firebase (Email + Google Sign-In)
+- **Demo Mode** — Full dashboard experience without any setup
 
-## 📁 Project Structure
+## 🚀 Getting Started
 
-```
-Swing_LAB/
-├── firmware/                    # ESP32 Arduino code
-│   └── esp32_cricket_sensor.ino
-├── backend/                     # Python Flask server
-│   ├── app.py                   # Main server
-│   ├── firebase_config.py       # Firebase Admin setup
-│   ├── requirements.txt         # Python dependencies
-│   └── .env.example             # Environment variables template
-├── frontend/                    # Web dashboard
-│   ├── index.html               # Landing page + auth
-│   ├── dashboard.html           # Live dashboard
-│   ├── css/
-│   │   ├── main.css             # Shared design system
-│   │   ├── auth.css             # Auth page styles
-│   │   └── dashboard.css        # Dashboard styles
-│   └── js/
-│       ├── firebase-config.js   # Firebase client config
-│       ├── auth.js              # Auth logic
-│       ├── dashboard.js         # Dashboard controller
-│       └── three-bat.js         # 3D bat visualization
-└── README.md
-```
+### Prerequisites
 
-## 🚀 Quick Start
+- Python 3.9+
+- Firebase project with Authentication enabled
 
-### 1. Set Up Firebase (Required for production, optional for demo)
-
-1. Go to [Firebase Console](https://console.firebase.google.com)
-2. Create a new project
-3. Enable **Authentication** → Email/Password
-4. Enable **Firestore Database**
-5. Go to **Project Settings** → **Service Accounts** → Generate private key
-6. Save the JSON file as `backend/serviceAccountKey.json`
-7. Go to **Project Settings** → **General** → Your apps → Web app
-8. Copy the config and paste into `frontend/js/firebase-config.js`
-
-### 2. Start the Backend
+### Setup
 
 ```bash
-cd backend
-
-# Create virtual environment
-python3 -m venv venv
-source venv/bin/activate  # macOS/Linux
-
 # Install dependencies
+cd backend
 pip install -r requirements.txt
 
-# Copy and edit env file
+# Configure environment
 cp .env.example .env
 
 # Run the server
 python app.py
 ```
 
-The server will start at `http://localhost:5000`
+Open `http://localhost:5050` in your browser.
 
-### 3. Open the Dashboard
+### Demo Mode
 
-Open `http://localhost:5000` in your browser. You'll see the login page.
+1. Register or login with any email
+2. Click **🎮 Start Demo** on the dashboard
+3. Click **START SHOT** → watch live data → **STOP & SAVE SHOT**
+4. View shot history and analytics on the home page
 
-### 4. Demo Mode (No Hardware)
+## 🌐 Deployment (Vercel)
 
-1. Register or login (use any email in demo mode)
-2. Click the **🎮 DEMO** button on the dashboard
-3. Press **▶ START SESSION** to begin recording
-4. Watch the simulated data flow into the dashboard
-
-### 5. ESP32 Hardware Setup
-
-#### Hardware Required:
-- ESP32 Dev Board
-- MPU6050 Accelerometer/Gyroscope module
-- Jumper wires
-- Cricket bat 🏏
-
-#### Wiring:
-| MPU6050 Pin | ESP32 Pin |
-|-------------|-----------|
-| VCC         | 3.3V      |
-| GND         | GND       |
-| SDA         | GPIO 21   |
-| SCL         | GPIO 22   |
-
-#### Upload Firmware:
-1. Open `firmware/esp32_cricket_sensor.ino` in Arduino IDE
-2. Install required libraries:
-   - `ArduinoJson` (by Benoit Blanchon)
-   - `WiFi` (built-in for ESP32)
-3. Edit WiFi credentials and backend IP in the code
-4. Select board: "ESP32 Dev Module"
-5. Upload
-
-## 🌐 Deployment
-
-### Deploy Backend (e.g., Railway, Render, or VPS)
+The project is configured for Vercel deployment:
 
 ```bash
-# Using gunicorn for production
-pip install gunicorn eventlet
-gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:5000
+# Deploy via Vercel CLI
+npx vercel --prod
 ```
 
-### Custom Domain
+Or connect your GitHub repo to Vercel for automatic deployments on push.
 
-1. Point your domain to the server IP
-2. Set up nginx as reverse proxy
-3. Configure SSL with Let's Encrypt
-
-### Environment Variables
+### Environment Variables (Vercel)
 
 | Variable | Description |
 |----------|-------------|
 | `FIREBASE_SERVICE_ACCOUNT_PATH` | Path to Firebase service account JSON |
 | `FLASK_SECRET_KEY` | Secret key for Flask sessions |
-| `PORT` | Server port (default: 5000) |
-
-## 🔌 API Endpoints
-
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| POST   | `/api/sensor-data` | Receive ESP32 sensor data |
-| GET    | `/api/esp32/status` | Check connected devices |
-| POST   | `/api/session/start` | Start recording session |
-| POST   | `/api/session/stop` | Stop and analyze session |
-| GET    | `/api/sessions` | Get session history |
-| GET    | `/api/profile` | Get user profile |
-| PUT    | `/api/profile` | Update user profile |
-| POST   | `/api/demo/start` | Start demo simulation |
-| GET    | `/api/health` | Health check |
 
 ## 🛠️ Tech Stack
 
 - **Frontend**: HTML5, CSS3, JavaScript, Chart.js, Three.js
 - **Backend**: Python, Flask, Flask-SocketIO
 - **Database**: Firebase Firestore
-- **Auth**: Firebase Authentication
-- **Hardware**: ESP32 + MPU6050
-- **Real-time**: WebSocket (Socket.IO)
-
+- **Auth**: Firebase Authentication (Email + Google)
+- **Deployment**: Vercel

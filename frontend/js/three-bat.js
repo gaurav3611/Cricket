@@ -14,7 +14,7 @@ let batGlowIntensity = 0;
 let sweetSpotMesh = null;
 let gridPulseTime = 0;
 let trailPoints = [];
-const MAX_TRAIL = 200;
+const MAX_TRAIL = 500;
 let trailLine = null;
 let trailGlowLine = null;
 
@@ -53,13 +53,13 @@ function init3DBat(containerId) {
   // Trail
   trailLine = new THREE.Line(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.85, linewidth: 2 })
+    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.9, linewidth: 2 })
   );
   batScene.add(trailLine);
 
   trailGlowLine = new THREE.Line(
     new THREE.BufferGeometry(),
-    new THREE.LineBasicMaterial({ color: 0x00d4ff, transparent: true, opacity: 0.2, linewidth: 4 })
+    new THREE.LineBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.3, linewidth: 4 })
   );
   batScene.add(trailGlowLine);
 
@@ -380,9 +380,9 @@ function animateBat() {
     var alpha = i / trailPoints.length;
     var dotGeo = new THREE.SphereGeometry(0.008 + alpha * 0.01, 6, 6);
     var dotMat = new THREE.MeshBasicMaterial({
-      color: p.speed > 0.008 ? 0xff6b00 : 0x00d4ff,
+      color: p.speed > 0.008 ? 0xffffff : 0xcccccc,
       transparent: true,
-      opacity: 0.1 + alpha * 0.7
+      opacity: 0.15 + alpha * 0.75
     });
     var dot = new THREE.Mesh(dotGeo, dotMat);
     dot.position.copy(p.pos);

@@ -346,48 +346,50 @@ function animateBat() {
     Math.pow(batTargetRot.z - batCurrentRot.z, 2)
   );
 
-  trailPoints.push({ pos: toeWorld.clone(), speed: speed });
-  if (trailPoints.length > MAX_TRAIL) trailPoints.shift();
-
-  if (trailPoints.length > 2) {
-    var positions = new Float32Array(trailPoints.length * 3);
-    trailPoints.forEach(function(p, i) {
-      positions[i * 3] = p.pos.x;
-      positions[i * 3 + 1] = p.pos.y;
-      positions[i * 3 + 2] = p.pos.z;
-    });
-
-    if (trailLine) {
-      trailLine.geometry.dispose();
-      var geo = new THREE.BufferGeometry();
-      geo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-      trailLine.geometry = geo;
+  // Only add trail point if the bat actually moved (avoid clumping)
+  var lastPt = trailPoints.length > 0 ? trailPoints[trailPoints.length - 1] : null;
+  var moved = !lastPt || toeWorld.distanceTo(lastPt.pos) > 0.005;
+  
+  if (moved) {
+    trailPoints.push({ pos: toeWorld.clone(), speed: speed });
+    
+    // Add a thick tube segment between last two points
+    if (trailPoints.length >= 2) {
+      var prevPt = trailPoints[trailPoints.length - 2];
+      var currPt = trailPoints[trailPoints.length - 1];
+      var dir = new THREE.Vector3().subVectors(currPt.pos, prevPt.pos);
+      var len = dir.length();
+      
+      if (len > 0.001) {
+        // Tube thickness = bat toe width (~0.04 radius)
+        var tubeRadius = 0.035;
+        var tubeGeo = new THREE.CylinderGeometry(tubeRadius, tubeRadius, len, 8, 1);
+        var tubeMat = new THREE.MeshPhongMaterial({
+          color: 0xffffff,
+          transparent: true,
+          opacity: 0.85,
+          emissive: 0xffffff,
+          emissiveIntensity: 0.15,
+          shininess: 80
+        });
+        
+        var tube = new THREE.Mesh(tubeGeo, tubeMat);
+        
+        // Position at midpoint
+        var mid = new THREE.Vector3().addVectors(prevPt.pos, currPt.pos).multiplyScalar(0.5);
+        tube.position.copy(mid);
+        
+        // Rotate to align with direction
+        tube.quaternion.setFromUnitVectors(
+          new THREE.Vector3(0, 1, 0),
+          dir.clone().normalize()
+        );
+        
+        tube.userData.isTrailTube = true;
+        tube.castShadow = true;
+        batScene.add(tube);
+      }
     }
-    if (trailGlowLine) {
-      trailGlowLine.geometry.dispose();
-      var gGeo = new THREE.BufferGeometry();
-      gGeo.setAttribute('position', new THREE.BufferAttribute(positions.slice(), 3));
-      trailGlowLine.geometry = gGeo;
-    }
-  }
-
-  // Trail dots
-  var oldDots = batScene.children.filter(function(c) { return c.userData && c.userData.isTrailDot; });
-  oldDots.forEach(function(d) { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
-
-  for (var i = 0; i < trailPoints.length; i += 6) {
-    var p = trailPoints[i];
-    var alpha = i / trailPoints.length;
-    var dotGeo = new THREE.SphereGeometry(0.008 + alpha * 0.01, 6, 6);
-    var dotMat = new THREE.MeshBasicMaterial({
-      color: p.speed > 0.008 ? 0xffffff : 0xcccccc,
-      transparent: true,
-      opacity: 0.15 + alpha * 0.75
-    });
-    var dot = new THREE.Mesh(dotGeo, dotMat);
-    dot.position.copy(p.pos);
-    dot.userData.isTrailDot = true;
-    batScene.add(dot);
   }
 
   // Camera slow orbit
@@ -427,7 +429,9 @@ function resetBat3D() {
   integratedRot = { x: 0, y: 0, z: 0 };
   trailPoints = [];
   if (batScene) {
-    var dots = batScene.children.filter(function(c) { return c.userData && c.userData.isTrailDot; });
-    dots.forEach(function(d) { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
+    var trails = batScene.children.filter(function(c) {
+      return c.userData && (c.userData.isTrailTube || c.userData.isTrailDot);
+    });
+    trails.forEach(function(d) { batScene.remove(d); d.geometry.dispose(); d.material.dispose(); });
   }
 }

@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * CricPro — Dashboard Controller
+ * SSwinGG — Dashboard Controller
  * =====================================================
  * Main dashboard logic: BLE + WebSocket connection,
  * real-time data processing, charts, session management
@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 function checkAuth() {
   if (isDemoMode) {
-    const demoUser = JSON.parse(localStorage.getItem('cricpro_demo_user') || 'null');
+    const demoUser = JSON.parse(localStorage.getItem('sswingg_demo_user') || 'null');
     if (!demoUser) {
       window.location.href = '/';
       return;
@@ -108,7 +108,7 @@ function connectWebSocket() {
       socket.on('connect', () => {
         console.log('[WS] Connected');
         updateConnectionStatus(true);
-        addLog('🔗 Connected to CricPro server');
+        addLog('🔗 Connected to SSwinGG server');
       });
       
       socket.on('disconnect', () => {
@@ -300,7 +300,7 @@ async function startSession() {
   try {
     await apiCall('/api/session/start', {
       method: 'POST',
-      body: JSON.stringify({ device_id: 'CRICPRO_BAT_001' })
+      body: JSON.stringify({ device_id: 'SSWINGG_BAT_001' })
     });
   } catch (err) {
     console.warn('Start session API call failed:', err);
@@ -640,7 +640,7 @@ async function logout() {
     if (!isDemoMode && firebaseAuth) {
       await firebaseAuth.signOut();
     }
-    localStorage.removeItem('cricpro_demo_user');
+    localStorage.removeItem('sswingg_demo_user');
     window.location.href = '/';
   } catch (err) {
     console.error('Logout error:', err);

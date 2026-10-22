@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SwingLab | Cricket Bat Swing Analyzer Dashboard</title>
-<meta name="description" content="SwingLab dashboard — view your cricket swing analytics, session history, and real-time bat sensor data."/>
+<title>SSwinGG | Cricket Bat Swing Analyzer Dashboard</title>
+<meta name="description" content="SSwinGG dashboard — view your cricket swing analytics, session history, and real-time bat sensor data."/>
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -955,7 +955,7 @@
       <div class="action-card ble-card" onclick="connectBLE()">
         <div class="action-icon">📶</div>
         <h3>Connect Sensor</h3>
-        <p>Power on your SwingLab bat sensor and connect via Bluetooth for real-time tracking.</p>
+        <p>Power on your SSwinGG bat sensor and connect via Bluetooth for real-time tracking.</p>
         <button class="action-btn">CONNECT VIA BLUETOOTH</button>
       </div>
       <div class="action-card demo-card" onclick="startDemoMode()">
@@ -1090,7 +1090,7 @@
     <div class="chart-card span2">
       <div class="card-title">Session Events</div>
       <ul class="log-list" id="logList">
-        <li class="log-item"><span class="log-icon">&#127951;</span><span class="log-msg">SwingLab ready</span><span class="log-time">--:--</span></li>
+        <li class="log-item"><span class="log-icon">&#127951;</span><span class="log-msg">SSwinGG ready</span><span class="log-time">--:--</span></li>
       </ul>
     </div>
   </div>
@@ -1358,7 +1358,7 @@ async function connectBLE() {
   }
 
   try {
-    logEvent('📶', 'Scanning for SwingLab devices...');
+    logEvent('📶', 'Scanning for SSwinGG devices...');
 
     bleDevice = await navigator.bluetooth.requestDevice({
       filters: [
@@ -2074,7 +2074,7 @@ function showSessionSummary() {
     '</div>' +
     '<div style="margin-top:16px;padding:14px;background:rgba(0,212,255,0.08);border-radius:10px;border-left:3px solid var(--accent);">' +
     '<span style="font-size:0.78rem;opacity:0.9;">' + analysis.summary + '</span></div>' +
-    '<div style="margin-top:10px;font-size:0.65rem;color:var(--muted);">SwingLab AI Coach v2.0 | ' + session.length + ' data points · ' + allShots.length + ' shots analyzed</div>';
+    '<div style="margin-top:10px;font-size:0.65rem;color:var(--muted);">SSwinGG AI Coach v2.0 | ' + session.length + ' data points · ' + allShots.length + ' shots analyzed</div>';
 
   updateScore(bestSpeed, avgAccuracy);
 }

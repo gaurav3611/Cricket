@@ -4,7 +4,7 @@ Guidance for AI coding agents working in this repository. Humans should start wi
 
 ## What this project is
 
-SwingLab is a cricket bat swing analytics web app. A sensor on the bat (an ESP32 board with an MPU6050 motion sensor) streams accelerometer and gyroscope readings to the browser over Bluetooth Low Energy (BLE). The browser computes bat speed, impact, control and shot direction, draws live charts and a 3D bat, and saves each shot.
+SSwinGG is a cricket bat swing analytics web app. A sensor on the bat (an ESP32 board with an MPU6050 motion sensor) streams accelerometer and gyroscope readings to the browser over Bluetooth Low Energy (BLE). The browser computes bat speed, impact, control and shot direction, draws live charts and a 3D bat, and saves each shot.
 
 - **Frontend**: static HTML, CSS and plain JavaScript in `frontend/`. Chart.js, Three.js and the Firebase compat SDK load from CDNs. There is no build step and no `package.json`.
 - **Backend**: Python Flask, in two separate implementations (see [Two backends](#two-backends)). A Spring Boot rewrite lives in its own repository, `java-cricket-backend`, and is not deployed (see [Spring Boot port](#spring-boot-port)).
@@ -109,7 +109,7 @@ Angular velocity below 5 °/s counts as zero, speed is capped at 180 km/h, and t
 
 This formula appears twice in `dashboard.html`, in `processData()` and in `analyzeSwingData()`. Change both together.
 
-A firmware for an ESP32-C3 Super Mini with a BMI160 sensor that follows this contract is in its own repository, [Cric-Pro-Hardware](https://github.com/gaurav3611/Cric-Pro-Hardware), kept in the folder `hardware` beside this one. It holds the circuit with battery and charger, nine staged sketches and the guide. `stages/08_swinglab_bat/swing_packet.h` builds the packet and `config.h` holds the ids. It has been compiled and run in a simulator, and its packets were read back with the Angular app's decoder, but it has not run on hardware. An earlier version is in `firmware/esp32c3-bmi160/` here, which git ignores.
+A firmware for an ESP32-C3 Super Mini with a BMI160 sensor that follows this contract is in its own repository, [Cric-Pro-Hardware](https://github.com/gaurav3611/Cric-Pro-Hardware), kept in the folder `hardware` beside this one. It holds the circuit with battery and charger, nine staged sketches and the guide. `stages/08_sswingg_bat/swing_packet.h` builds the packet and `config.h` holds the ids. It has been compiled and run in a simulator, and its packets were read back with the Angular app's decoder, but it has not run on hardware. An earlier version is in `firmware/esp32c3-bmi160/` here, which git ignores.
 
 The legacy files use different constants. `bluetooth.js` scales by 16384 and 131. `backend/app.py` uses a 0.55 m radius, a 10 °/s dead zone and a 160 km/h cap. Those are not reference values. Do not change the live code to match them.
 
@@ -190,7 +190,7 @@ The README says to log in with any email. That works only when `isDemoMode` is t
 - **Two sets of CSS variables.** `dashboard.html` defines `--bg`, `--accent`, `--accent2`, `--green`, `--muted`. `main.css` defines `--bg-primary`, `--accent-cyan`, `--accent-orange`, `--text-muted`. They are not interchangeable.
 - **Fonts.** Orbitron for headings and numbers, Inter for body text.
 - **Storage keys.** `swinglab_shots` and `cricpro_demo_user`. Renaming either discards data saved in users' browsers.
-- **Do not mass-rename CricPro to SwingLab.** The storage key, the Firebase project id and the BLE name prefix are functional values.
+- **Do not mass-rename CricPro to SSwinGG.** The storage key, the Firebase project id and the BLE name prefix are functional values.
 - **HTML injection.** Much of the markup is built with string concatenation and `innerHTML`. Use `textContent` for anything a user typed, such as a display name.
 - **Browser support.** Web Bluetooth works only in Chromium browsers such as Chrome and Edge, and only on `https` or `localhost`.
 

@@ -1,4 +1,4 @@
-# 🏏 SwingLab — Cricket Swing Analytics Dashboard
+# 🏏 SSwinGG — Cricket Swing Analytics Dashboard
 
 A real-time cricket swing analytics platform with 3D visualization, shot tracking, and performance insights.
 

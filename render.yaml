@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: swinglab-backend
+    name: sswingg-backend
     runtime: python
     buildCommand: pip install -r backend/requirements.txt
     startCommand: cd backend && gunicorn --worker-class eventlet -w 1 app:app --bind 0.0.0.0:$PORT

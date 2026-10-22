@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * SwingLab — 3D Cricket Bat (Realistic) + Swing Trace
+ * SSwinGG — 3D Cricket Bat (Realistic) + Swing Trace
  * =====================================================
  * Modeled after a real cricket bat reference image.
  * Grip at top, toe at bottom (facing down).

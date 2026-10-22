@@ -42,7 +42,7 @@ async function connectBLE() {
   }
   
   try {
-    addLog('Searching for SwingLab bat sensor...');
+    addLog('Searching for SSwinGG bat sensor...');
     
     // Request device - user will see a pairing dialog
     bleDevice = await navigator.bluetooth.requestDevice({
@@ -89,7 +89,7 @@ async function connectBLE() {
     
   } catch (error) {
     if (error.name === 'NotFoundError') {
-      addLog('No SwingLab device found. Make sure the bat sensor is powered on.');
+      addLog('No SSwinGG device found. Make sure the bat sensor is powered on.');
       showToast('No device found. Power on the bat sensor and try again.', 'error');
     } else if (error.name === 'SecurityError') {
       addLog('Bluetooth permission denied.');

@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * CricPro — Authentication Module
+ * SSwinGG — Authentication Module
  * =====================================================
  * Handles user registration, login, and session management
  * using Firebase Authentication
@@ -100,7 +100,7 @@ async function handleLogin(e) {
   // Demo mode
   if (isDemoMode) {
     showToast('Running in demo mode — redirecting to dashboard', 'info');
-    localStorage.setItem('cricpro_demo_user', JSON.stringify({
+    localStorage.setItem('sswingg_demo_user', JSON.stringify({
       email: email,
       displayName: email.split('@')[0],
       uid: 'demo-' + Date.now()
@@ -173,7 +173,7 @@ async function handleRegister(e) {
   // Demo mode
   if (isDemoMode) {
     showToast('Account created in demo mode — redirecting', 'info');
-    localStorage.setItem('cricpro_demo_user', JSON.stringify({
+    localStorage.setItem('sswingg_demo_user', JSON.stringify({
       email: email,
       displayName: name,
       uid: 'demo-' + Date.now(),
@@ -211,7 +211,7 @@ async function handleRegister(e) {
     }
     
     currentUser = credential.user;
-    showToast('Account created! Welcome to CricPro 🏏', 'success');
+    showToast('Account created! Welcome to SSwinGG 🏏', 'success');
     // onAuthStateChanged will handle redirect
     
   } catch (error) {

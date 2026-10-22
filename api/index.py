@@ -78,7 +78,7 @@ def require_auth(f):
 def health_check():
     return jsonify({
         'status': 'healthy',
-        'service': 'CricPro API (Vercel Serverless)',
+        'service': 'SSwinGG API (Vercel Serverless)',
         'firebase_connected': not demo_mode
     }), 200
 

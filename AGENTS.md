@@ -11,7 +11,7 @@ SSwinGG is a cricket bat swing analytics web app. A sensor on the bat (an ESP32 
 - **Auth and data**: Firebase Authentication (email and Google) and Firestore, project id `cricpro-app`.
 - **Hosting**: Vercel (`vercel.json`). Render (`render.yaml`) and a `Procfile` exist as an alternative.
 
-The product used to be called CricPro. That name survives in code comments, the server banner, one storage key and the Firebase project id.
+The product used to be called CricPro, then SwingLab. The old names survive only in the Firebase project id `cricpro-app`, the legacy Bluetooth filter `SwingLab`, and the one-time move of the old shots key.
 
 ## Read this first
 
@@ -85,7 +85,7 @@ Things that go wrong here, all reproduced on macOS on 2026-10-08:
 2. The dashboard home view shows stats and shot history from `localStorage`, then calls `GET /api/profile` and `GET /api/sessions`.
 3. The live view gets readings from one of two sources. **Connect** pairs with the bat through Web Bluetooth. **Start Demo** generates simulated readings in the browser with `startDemoData()` and involves no backend.
 4. **START SHOT** begins recording. Every reading goes through `processData()`, which updates the charts, the 3D bat and the live numbers.
-5. **STOP & SAVE SHOT** runs `analyzeSwingData()` and stores the result with `saveShotToHistory()` under the `localStorage` key `swinglab_shots`. The list is newest first and capped at 50.
+5. **STOP & SAVE SHOT** runs `analyzeSwingData()` and stores the result with `saveShotToHistory()` under the `localStorage` key `sswingg_shots`. The list is newest first and capped at 50.
 
 The live frontend calls exactly three backend endpoints: `GET /api/profile`, `GET /api/sessions`, and `PUT /api/profile` once at registration. Shots are stored in the browser only. Nothing in the live frontend writes sessions to Firestore, opens a Socket.IO connection, or calls `/api/session/start`, `/api/session/stop`, `/api/sensor-data` or `/api/demo/start`. Those exist in `backend/app.py` and were used by the legacy `dashboard.js`.
 
@@ -93,7 +93,7 @@ The live frontend calls exactly three backend endpoints: `GET /api/profile`, `GE
 
 The browser and the bat firmware must agree on these values. The firmware is not in this repo, so do not change them unless the owner confirms a matching firmware change.
 
-- Device name prefix: `SwingLab`.
+- Device name prefix: `SSwinGG`. Bats flashed before the rename advertise `SwingLab`, and the filters still accept that too.
 - BLE service UUID: `4fafc201-1fb5-459e-8fcc-c5c9c331914b`.
 - Sensor characteristic UUID, notify: `beb5483e-36e1-4688-b7f5-ea07361b26a8`.
 - Packet: at least 14 bytes, seven little-endian `int16` values in the order `ax, ay, az, gx, gy, gz, temperature`. The live code ignores temperature.
@@ -174,7 +174,7 @@ Three unrelated switches share the name.
 
 | Switch | Location | On when | Effect |
 |---|---|---|---|
-| `isDemoMode` | `frontend/js/firebase-config.js` | The Firebase SDK failed to load, or `firebaseConfig.apiKey` equals `YOUR_API_KEY` | Login accepts any email, the user is stored in `localStorage` under `cricpro_demo_user`, and API calls send the token `demo-token` |
+| `isDemoMode` | `frontend/js/firebase-config.js` | The Firebase SDK failed to load, or `firebaseConfig.apiKey` equals `YOUR_API_KEY` | Login accepts any email, the user is stored in `localStorage` under `sswingg_demo_user`, and API calls send the token `demo-token` |
 | `demo_mode` | `backend/app.py`, `api/index.py` | Service-account credentials are missing | Auth is skipped, every request is the demo user, nothing is persisted |
 | Start Demo button | `frontend/dashboard.html` | The user clicks it | Simulated sensor readings in the browser |
 
@@ -189,8 +189,8 @@ The README says to log in with any email. That works only when `isDemoMode` is t
 - **Library versions.** Three.js is r128, loaded as the global `THREE`. ES module imports and APIs added after r128 are unavailable. Firebase compat is 10.14.1. Chart.js is loaded unpinned from jsDelivr.
 - **Two sets of CSS variables.** `dashboard.html` defines `--bg`, `--accent`, `--accent2`, `--green`, `--muted`. `main.css` defines `--bg-primary`, `--accent-cyan`, `--accent-orange`, `--text-muted`. They are not interchangeable.
 - **Fonts.** Orbitron for headings and numbers, Inter for body text.
-- **Storage keys.** `swinglab_shots` and `cricpro_demo_user`. Renaming either discards data saved in users' browsers.
-- **Do not mass-rename CricPro to SSwinGG.** The storage key, the Firebase project id and the BLE name prefix are functional values.
+- **Storage keys.** `sswingg_shots` and `sswingg_demo_user`. Shots saved under the old key `swinglab_shots` are moved to `sswingg_shots` once, on load. Renaming a key again needs the same kind of move, or users lose their data.
+- **Do not rename the Firebase project id** `cricpro-app`: it is the real project's address, and sign-in breaks without it.
 - **HTML injection.** Much of the markup is built with string concatenation and `innerHTML`. Use `textContent` for anything a user typed, such as a display name.
 - **Browser support.** Web Bluetooth works only in Chromium browsers such as Chrome and Edge, and only on `https` or `localhost`.
 
@@ -224,7 +224,7 @@ awk '/^<script>$/{f=1;next} /^<\/script>$/{f=0} f' frontend/dashboard.html > /tm
 curl http://localhost:5050/api/health
 ```
 
-Syntax checks do not exercise behavior. For a dashboard change, the real check is manual: open the dashboard in Chrome, click **Start Demo**, click **START SHOT**, wait a few seconds, click **STOP & SAVE SHOT**, and confirm a shot card appears and shows up on the home view. This needs a signed-in session, see [Demo mode](#demo-mode). Say plainly which of these you ran and which you did not.
+Syntax checks do not exercise behavior. For a dashboard change, the real check is manual: open the dashboard in Chrome, click **Start Demo**, click **START SHOT**, wait a few seconds, click **STOP & SAVE SHOT**, and confirm a shot card appears and shows up on the home view, whether you go back with BACK or with the Home button in the header. This needs a signed-in session, see [Demo mode](#demo-mode). Say plainly which of these you ran and which you did not.
 
 ## Deployment
 

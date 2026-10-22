@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * CricPro - Web Bluetooth Connection Module
+ * SSwinGG - Web Bluetooth Connection Module
  * =====================================================
  * Connects directly to the ESP32 BLE sensor from the
  * browser using the Web Bluetooth API.
@@ -47,7 +47,8 @@ async function connectBLE() {
     // Request device - user will see a pairing dialog
     bleDevice = await navigator.bluetooth.requestDevice({
       filters: [
-        { namePrefix: 'SwingLab' },
+        { namePrefix: 'SSwinGG' },
+        { namePrefix: 'SwingLab' }, // bats flashed before the rename
         { services: [BLE_SERVICE_UUID] }
       ],
       optionalServices: [BLE_SERVICE_UUID]

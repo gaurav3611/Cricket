@@ -1,6 +1,6 @@
 """
 =====================================================
-CricPro — Python Backend Server
+SSwinGG — Python Backend Server
 =====================================================
 
 Flask + Socket.IO backend that:
@@ -38,7 +38,7 @@ from firebase_config import (
 load_dotenv()
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='')
-app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'cricpro-secret-key-change-me')
+app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'sswingg-secret-key-change-me')
 
 CORS(app, resources={"/api/*": {"origins": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*", async_mode='threading')
@@ -231,7 +231,7 @@ def esp32_status():
 def start_session():
     """Start a new recording session."""
     data = request.get_json() or {}
-    device_id = data.get('device_id', 'CRICPRO_BAT_001')
+    device_id = data.get('device_id', 'SSWINGG_BAT_001')
     
     session_id = str(uuid.uuid4())[:8]
     
@@ -430,7 +430,7 @@ def get_profile():
     if demo_mode:
         return jsonify({
             'uid': 'demo-user',
-            'email': 'demo@cricpro.com',
+            'email': 'demo@sswingg.com',
             'display_name': 'Demo User',
             'stats': {
                 'total_sessions': 0,
@@ -562,7 +562,7 @@ def start_demo_simulation():
 def handle_connect():
     print(f"[WS] Client connected: {request.sid}")
     connected_clients[request.sid] = None
-    emit('connected', {'message': 'Connected to CricPro server'})
+    emit('connected', {'message': 'Connected to SSwinGG server'})
 
 
 @socketio.on('disconnect')
@@ -612,7 +612,7 @@ if __name__ == '__main__':
     
     print()
     print("╔════════════════════════════════════════════╗")
-    print("║   🏏 CricPro Backend Server v2.0          ║")
+    print("║   🏏 SSwinGG Backend Server v2.0          ║")
     print("║   Cricket Bat Swing Analyzer               ║")
     print("╚════════════════════════════════════════════╝")
     print()

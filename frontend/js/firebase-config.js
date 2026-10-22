@@ -1,6 +1,6 @@
 /**
  * =====================================================
- * CricPro — Firebase Client Configuration
+ * SSwinGG — Firebase Client Configuration
  * =====================================================
  * 
  * IMPORTANT: Replace the config below with YOUR Firebase

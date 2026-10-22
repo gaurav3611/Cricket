@@ -442,12 +442,12 @@
     box-shadow: 0 0 8px rgba(255,45,85,0.15);
   }
   .btn-stop:hover { background: rgba(255,45,85,0.1); transform: translateY(-1px); }
-  .btn-back {
+  .btn-back, .btn-cancel {
     background: transparent;
     color: var(--muted);
     border: 1px solid var(--border);
   }
-  .btn-back:hover { color: var(--text); border-color: var(--text); }
+  .btn-back:hover, .btn-cancel:hover { color: var(--text); border-color: var(--text); }
 
   /* Swing Button Prominent */
   .swing-control {
@@ -670,6 +670,20 @@
   .shot-card.good::before { background: var(--accent); }
   .shot-card.average::before { background: var(--accent2); }
   .shot-card.poor::before { background: var(--red); }
+  .shot-check {
+    display: none;
+    position: absolute; top: 10px; right: 10px;
+    width: 18px; height: 18px;
+    border: 2px solid var(--muted); border-radius: 4px;
+  }
+  .shots-grid.selecting .shot-check { display: block; }
+  .shot-card.selected { border-color: var(--red); }
+  .shot-card.selected .shot-check { background: var(--red); border-color: var(--red); }
+  .select-bar { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: 12px; }
+  .select-bar span { flex: 1; font-weight: 600; }
+  .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .clear-dialog { max-width: 480px; }
+  .clear-actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: flex-end; }
   .shot-number {
     font-family: 'Orbitron', sans-serif;
     font-size: 0.6rem; font-weight: 700;
@@ -852,7 +866,7 @@
 <header>
   <div class="logo">
     <div class="logo-icon">🏏</div>
-    SWING<span>LAB</span>
+    SSwin<span>GG</span>
   </div>
   <div class="header-nav">
     <button class="nav-btn active" id="navHome" onclick="showView('home')">🏠 Home</button>
@@ -922,8 +936,13 @@
       <div class="card-title">🏏 Recent Shots</div>
       <div style="display:flex;gap:8px;align-items:center;">
         <div class="card-badge" id="homeShotCount">0 shots</div>
-        <button class="nav-btn" onclick="clearShotHistory()" style="font-size:0.6rem;padding:5px 10px;">CLEAR</button>
+        <button class="nav-btn" id="clearShotsBtn" onclick="clearShotHistory()" style="font-size:0.6rem;padding:5px 10px;">CLEAR</button>
       </div>
+    </div>
+    <div class="select-bar" id="selectBar" style="display:none;">
+      <span id="selectCount">0 selected</span>
+      <button class="btn btn-stop" id="deleteSelectedBtn" onclick="deleteSelectedShots()" disabled>Delete selected</button>
+      <button class="btn btn-cancel" id="cancelSelectBtn" onclick="stopChoosingShots()">Cancel</button>
     </div>
     <div class="shots-grid" id="homeShotsGrid" style="margin-top:12px;"></div>
   </div>
@@ -1097,6 +1116,21 @@
 </div>
 
 <!-- ===== SHOT DETAIL OVERLAY ===== -->
+<!-- The warning before shots are deleted -->
+<div class="shot-detail-overlay" id="clearOverlay" onclick="if (event.target === this) closeClearDialog()">
+  <div class="shot-detail-content clear-dialog">
+    <div class="shot-detail-header">
+      <h2>Delete shots?</h2>
+      <p id="clearText">Deleted shots cannot be recovered.</p>
+    </div>
+    <div class="clear-actions">
+      <button class="btn btn-cancel" id="clearCancelBtn" onclick="closeClearDialog()">Cancel</button>
+      <button class="btn btn-cancel" id="clearChooseBtn" onclick="startChoosingShots()">Choose shots</button>
+      <button class="btn btn-stop" id="clearAllBtn" onclick="deleteAllShots()">Delete all</button>
+    </div>
+  </div>
+</div>
+
 <div class="shot-detail-overlay" id="shotDetailOverlay">
   <div class="shot-detail-content" id="shotDetailContent">
     <button class="shot-detail-close" onclick="closeShotDetail()">✕</button>
@@ -1123,7 +1157,7 @@ document.addEventListener('DOMContentLoaded', function() {
   initializeFirebase();
 
   if (isDemoMode) {
-    var demoUser = JSON.parse(localStorage.getItem('cricpro_demo_user') || 'null');
+    var demoUser = JSON.parse(localStorage.getItem('sswingg_demo_user') || 'null');
     if (!demoUser) {
       window.location.href = '/';
       return;
@@ -1153,11 +1187,11 @@ function setupDashboard(name) {
 function handleLogout() {
   if (!isDemoMode && firebaseAuth) {
     firebaseAuth.signOut().then(function() {
-      localStorage.removeItem('cricpro_demo_user');
+      localStorage.removeItem('sswingg_demo_user');
       window.location.href = '/';
     });
   } else {
-    localStorage.removeItem('cricpro_demo_user');
+    localStorage.removeItem('sswingg_demo_user');
     window.location.href = '/';
   }
 }
@@ -1168,6 +1202,13 @@ function showView(view) {
   document.getElementById('liveView').style.display = view === 'live' ? 'block' : 'none';
   document.getElementById('navHome').classList.toggle('active', view === 'home');
   document.getElementById('navLive').classList.toggle('active', view === 'live');
+
+  // Home always shows the shots saved so far, whichever button led here.
+  if (view === 'home') {
+    loadUserStats();
+    loadSessionHistory();
+    loadHomeShotHistory();
+  }
 
   if (view === 'live') {
     setTimeout(function() {
@@ -1181,9 +1222,6 @@ function goBackHome() {
   if (demoRunning) stopDemoSimulation();
   if (recording) endSession();
   showView('home');
-  loadUserStats();
-  loadSessionHistory();
-  loadHomeShotHistory();
 }
 
 // ===== LOAD USER STATS =====
@@ -1212,10 +1250,18 @@ async function loadUserStats() {
   }
 }
 
+// Shots saved before the rename to SSwinGG move to the new key once.
+try {
+  if (localStorage.getItem('sswingg_shots') === null && localStorage.getItem('swinglab_shots') !== null) {
+    localStorage.setItem('sswingg_shots', localStorage.getItem('swinglab_shots'));
+    localStorage.removeItem('swinglab_shots');
+  }
+} catch (e) {}
+
 // Populate stats from localStorage shot history
 function updateStatsFromLocalShots() {
   try {
-    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    var history = JSON.parse(localStorage.getItem('sswingg_shots') || '[]');
     if (history.length === 0) return;
 
     var bestSpeed = 0, offCount = 0, legCount = 0, straightCount = 0;
@@ -1362,7 +1408,8 @@ async function connectBLE() {
 
     bleDevice = await navigator.bluetooth.requestDevice({
       filters: [
-        { namePrefix: 'SwingLab' },
+        { namePrefix: 'SSwinGG' },
+        { namePrefix: 'SwingLab' }, // bats flashed before the rename
         { services: [BLE_SERVICE_UUID] }
       ],
       optionalServices: [BLE_SERVICE_UUID]
@@ -2229,7 +2276,7 @@ function aiCoachAnalysis(peakSpeed, peakImpact, controlScore, lastShotGZ) {
 // ===== SHOT HISTORY PERSISTENCE (localStorage) =====
 function saveShotToHistory(shot) {
   try {
-    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    var history = JSON.parse(localStorage.getItem('sswingg_shots') || '[]');
     history.unshift({
       number: shot.number,
       peakSpeed: +shot.peakSpeed.toFixed(1),
@@ -2245,13 +2292,13 @@ function saveShotToHistory(shot) {
     });
     // Keep last 50 shots
     if (history.length > 50) history = history.slice(0, 50);
-    localStorage.setItem('swinglab_shots', JSON.stringify(history));
+    localStorage.setItem('sswingg_shots', JSON.stringify(history));
   } catch(e) { console.warn('Could not save shot:', e); }
 }
 
 function loadHomeShotHistory() {
   try {
-    var history = JSON.parse(localStorage.getItem('swinglab_shots') || '[]');
+    var history = JSON.parse(localStorage.getItem('sswingg_shots') || '[]');
     var card = document.getElementById('homeShotsCard');
     var grid = document.getElementById('homeShotsGrid');
     var countEl = document.getElementById('homeShotCount');
@@ -2264,20 +2311,24 @@ function loadHomeShotHistory() {
     card.style.display = '';
     countEl.textContent = history.length + ' shot' + (history.length !== 1 ? 's' : '');
     grid.innerHTML = '';
+    grid.classList.toggle('selecting', selectingShots);
 
     history.forEach(function(s) {
       var time = new Date(s.timestamp);
       var timeStr = time.toLocaleDateString('en-IN', { day:'numeric', month:'short' }) + ' ' +
                     time.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
       var div = document.createElement('div');
-      div.className = 'shot-card ' + s.grade;
+      var key = shotKey(s);
+      div.className = 'shot-card ' + s.grade + (selectedShots[key] ? ' selected' : '');
       div.innerHTML =
+        '<span class="shot-check"></span>' +
         '<div class="shot-number">Shot #' + s.number + '</div>' +
         '<div class="shot-speed">' + s.peakSpeed + '<span class="unit"> km/h</span></div>' +
         '<div class="shot-meta">Accuracy: ' + s.accuracy + '% · ' + s.direction.toUpperCase() + '</div>' +
         '<div class="shot-meta" style="color:var(--muted);font-size:0.62rem;">' + timeStr + '</div>' +
         '<div class="shot-direction-badge ' + s.direction + '">' + s.direction.toUpperCase() + '</div>';
       div.onclick = function() {
+        if (selectingShots) { toggleShotSelection(key); return; }
         showShotDetail({
           number: s.number,
           peakSpeed: s.peakSpeed,
@@ -2297,13 +2348,76 @@ function loadHomeShotHistory() {
   } catch(e) { console.warn('Could not load shot history:', e); }
 }
 
+// ===== DELETING SHOTS: a warning first, then all of them or the chosen ones =====
+var selectingShots = false;
+var selectedShots = {};   // shotKey -> true
+
+// A shot is named by its time and number, not its place in the list, which moves when one is added.
+function shotKey(s) { return s.timestamp + '|' + s.number; }
+
+function storedShots() {
+  return JSON.parse(localStorage.getItem('sswingg_shots') || '[]');
+}
+
 function clearShotHistory() {
-  if (confirm('Clear all shot history?')) {
-    localStorage.removeItem('swinglab_shots');
-    document.getElementById('homeShotsCard').style.display = 'none';
-    document.getElementById('homeShotsGrid').innerHTML = '';
-    showToast('Shot history cleared', 'info');
-  }
+  var n = storedShots().length;
+  var shots = n + ' shot' + (n !== 1 ? 's' : '');
+  document.getElementById('clearText').textContent =
+    'Deleted shots cannot be recovered. Delete all ' + shots + ', or choose the ones to delete.';
+  document.getElementById('clearAllBtn').textContent = 'Delete all ' + shots;
+  document.getElementById('clearOverlay').classList.add('visible');
+}
+
+function closeClearDialog() {
+  document.getElementById('clearOverlay').classList.remove('visible');
+}
+
+function deleteAllShots() {
+  closeClearDialog();
+  stopChoosingShots();
+  localStorage.removeItem('sswingg_shots');
+  document.getElementById('homeShotsCard').style.display = 'none';
+  document.getElementById('homeShotsGrid').innerHTML = '';
+  showToast('Shot history cleared', 'info');
+}
+
+function startChoosingShots() {
+  closeClearDialog();
+  selectingShots = true;
+  selectedShots = {};
+  updateSelectBar();
+  loadHomeShotHistory();
+}
+
+function stopChoosingShots() {
+  selectingShots = false;
+  selectedShots = {};
+  updateSelectBar();
+  loadHomeShotHistory();
+}
+
+function toggleShotSelection(key) {
+  if (selectedShots[key]) delete selectedShots[key];
+  else selectedShots[key] = true;
+  updateSelectBar();
+  loadHomeShotHistory();
+}
+
+function updateSelectBar() {
+  var n = Object.keys(selectedShots).length;
+  document.getElementById('selectBar').style.display = selectingShots ? 'flex' : 'none';
+  document.getElementById('selectCount').textContent = n + ' selected';
+  document.getElementById('deleteSelectedBtn').disabled = n === 0;
+}
+
+function deleteSelectedShots() {
+  var history = storedShots();
+  var kept = history.filter(function(s) { return !selectedShots[shotKey(s)]; });
+  var n = history.length - kept.length;
+  if (kept.length) localStorage.setItem('sswingg_shots', JSON.stringify(kept));
+  else localStorage.removeItem('sswingg_shots');
+  stopChoosingShots();
+  showToast(n + ' shot' + (n !== 1 ? 's' : '') + ' deleted', 'info');
 }
 
 // Legacy compatibility
